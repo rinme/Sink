@@ -1,0 +1,252 @@
+{
+  "common": {
+    "i18n": "หลายภาษา",
+    "abbreviations": "Th",
+    "current_language": "ภาษาไทย",
+    "try_again": "ลองอีกครั้ง",
+    "cancel": "ยกเลิก",
+    "continue": "ดำเนินการต่อ",
+    "close": "ปิด",
+    "save": "บันทึก",
+    "edit": "แก้ไข",
+    "delete": "ลบ",
+    "delete_success": "ลบสำเร็จ!",
+    "search": "ค้นหา"
+  },
+  "theme": {
+    "toggle": "สลับธีม",
+    "light": "สว่าง",
+    "dark": "มืด",
+    "system": "ระบบ"
+  },
+  "login": {
+    "title": "เข้าสู่ระบบ",
+    "description": "กรอกโทเค็นไซต์ของคุณเพื่อเข้าสู่ระบบ",
+    "tips": "เคล็ดลับ",
+    "preview_token": "โทเค็นไซต์สำหรับโหมดดูตัวอย่างคือ",
+    "submit": "เข้าสู่ระบบ",
+    "failed": "เข้าสู่ระบบล้มเหลว กรุณาลองอีกครั้ง",
+    "token_label": "โทเค็นไซต์",
+    "token_required": "ต้องระบุโทเค็น"
+  },
+  "logout": {
+    "title": "ออกจากระบบ?",
+    "confirm": "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?",
+    "action": "ออกจากระบบ"
+  },
+  "layouts": {
+    "footer": {
+      "copyright": "ผลิตภัณฑ์ของ HTML.ZONE",
+      "social": {
+        "email": "อีเมล",
+        "telegram": "เทเลแกรม",
+        "blog": "บล็อก",
+        "twitter": "ทวิตเตอร์",
+        "mastodon": "มาสโตดอน",
+        "github": "กิตฮับ"
+      }
+    },
+    "header": {
+      "select_language": "เลือกภาษา"
+    }
+  },
+  "nav": {
+    "links": "ลิงก์",
+    "analysis": "การวิเคราะห์",
+    "realtime": "เรียลไทม์",
+    "migrate": "นำเข้า/ส่งออก"
+  },
+  "sidebar": {
+    "subtitle": "ตัวย่อ URL",
+    "platform": "แพลตฟอร์ม",
+    "settings": "การตั้งค่า",
+    "import": "นำเข้า",
+    "export": "ส่งออก",
+    "github": "กิตฮับ",
+    "stars": "ดาว"
+  },
+  "home": {
+    "hero": {
+      "github_repo": "ที่เก็บ GitHub"
+    },
+    "features": {
+      "title": "ฟีเจอร์",
+      "subtitle": "ฟังก์ชันที่เรียบง่ายและเพียงพอ",
+      "url_shortening": {
+        "title": "ย่อ URL",
+        "description": "บีบอัด URL ของคุณให้มีความยาวน้อยที่สุด"
+      },
+      "analytics": {
+        "title": "การวิเคราะห์",
+        "description": "ตรวจสอบการวิเคราะห์ลิงก์และรวบรวมสถิติที่น่าสนใจ"
+      },
+      "serverless": {
+        "title": "Serverless",
+        "description": "ปรับใช้โดยไม่ต้องใช้เซิร์ฟเวอร์แบบดั้งเดิม"
+      },
+      "customizable_slug": {
+        "title": "สลากที่กำหนดเองได้",
+        "description": "รองรับสลากที่กำหนดเองและความไวต่ออักษรใหญ่เล็ก"
+      },
+      "ai_slug": {
+        "title": "สลาก AI",
+        "description": "ใช้ AI เพื่อสร้างสลาก"
+      },
+      "link_expiration": {
+        "title": "วันหมดอายุลิงก์",
+        "description": "ตั้งวันที่หมดอายุสำหรับลิงก์ของคุณ"
+      }
+    },
+    "cta": {
+      "title": "ปรับใช้ทันที",
+      "description": "เพียงไม่กี่คลิกง่ายๆ คุณก็สามารถเริ่มปรับใช้ได้โดยไม่มีค่าใช้จ่าย",
+      "button": "เริ่มปรับใช้"
+    },
+    "logos": {
+      "title": "สร้างด้วยเทคโนโลยีที่ยอดเยี่ยม"
+    },
+    "twitter": {
+      "follow": "ติดตามบน X(ทวิตเตอร์)"
+    },
+    "stats": {
+      "title": "Sink ในตัวเลข",
+      "subtitle": "เชื่อถือได้โดยนักพัฒนาทั่วโลก",
+      "stars": "ดาวบน GitHub",
+      "forks": "ฟอร์กบน GitHub"
+    },
+    "testimonials": {
+      "title": "ผู้ใช้รัก",
+      "subtitle": "ดูว่านักพัฒนาพูดถึง Sink อย่างไร"
+    }
+  },
+  "dashboard": {
+    "title": "แดชบอร์ด",
+    "visits": "ผู้เข้าชม",
+    "views": "การดู",
+    "visitors": "ผู้เยี่ยมชม",
+    "referers": "ผู้แนะนำ",
+    "stats": "สถิติของ",
+    "custom_date": "วันที่กำหนดเอง",
+    "date": "วันที่",
+    "date_range": "ช่วงวันที่",
+    "locations": "สถานที่",
+    "details": "รายละเอียด",
+    "name": "ชื่อ",
+    "count": "จำนวน",
+    "loading": "กำลังโหลด",
+    "no_data": "ไม่มีข้อมูล",
+    "none": "(ไม่มี)",
+    "filter_placeholder": "กรองลิงก์...",
+    "date_picker": {
+      "today": "วันนี้",
+      "last_24h": "24 ชั่วโมงที่ผ่านมา",
+      "this_week": "สัปดาห์นี้",
+      "last_7d": "7 วันที่ผ่านมา",
+      "this_month": "เดือนนี้",
+      "last_30d": "30 วันที่ผ่านมา",
+      "last_90d": "90 วันที่ผ่านมา",
+      "custom": "กำหนดเอง",
+      "custom_title": "วันที่กำหนดเอง",
+      "single_date": "วันที่",
+      "date_range": "ช่วงวันที่"
+    },
+    "metrics": {
+      "country": "ประเทศ",
+      "region": "ภูมิภาค",
+      "city": "เมือง",
+      "referer": "ผู้แนะนำ",
+      "slug": "สลาก",
+      "language": "ภาษา",
+      "timezone": "โซนเวลา",
+      "device": "อุปกรณ์",
+      "deviceType": "ประเภทอุปกรณ์",
+      "os": "ระบบปฏิบัติการ",
+      "browser": "เบราว์เซอร์",
+      "browserType": "ประเภทเบราว์เซอร์"
+    },
+    "time_picker": {
+      "today": "วันนี้",
+      "last_5m": "5 นาทีที่ผ่านมา",
+      "last_10m": "10 นาทีที่ผ่านมา",
+      "last_30m": "30 นาทีที่ผ่านมา",
+      "last_1h": "1 ชั่วโมงที่ผ่านมา",
+      "last_6h": "6 ชั่วโมงที่ผ่านมา",
+      "last_12h": "12 ชั่วโมงที่ผ่านมา",
+      "last_24h": "24 ชั่วโมงที่ผ่านมา"
+    }
+  },
+  "links": {
+    "create": "สร้างลิงก์",
+    "edit": "แก้ไขลิงก์",
+    "delete_confirm_title": "คุณแน่ใจหรือไม่?",
+    "delete_confirm_desc": "การดำเนินการนี้ไม่สามารถย้อนกลับได้ จะลบลิงก์ของคุณออกจากเซิร์ฟเวอร์จริงๆ",
+    "delete_success": "ลบสำเร็จ!",
+    "delete_failed": "ลบไม่สำเร็จ!",
+    "update_success": "อัปเดตลิงก์สำเร็จ",
+    "create_success": "สร้างลิงก์สำเร็จ",
+    "preview_mode_tip": "ลิงก์โหมดแสดงตัวอย่างใช้ได้สูงสุด 5 นาที",
+    "search_placeholder": "ค้นหาลิงก์...",
+    "no_results": "ไม่พบลิงก์",
+    "group_title": "ลิงก์",
+    "copy_success": "คัดลอกสำเร็จ!",
+    "created_at": "สร้างเมื่อ",
+    "updated_at": "อัปเดตเมื่อ",
+    "expires_at": "หมดอายุเมื่อ",
+    "no_more": "ไม่มีลิงก์เพิ่มเติม",
+    "load_failed": "โหลดลิงก์ล้มเหลว",
+    "download_qr_code": "ดาวน์โหลด QR Code",
+    "change_qr_color": "เปลี่ยนสี QR code",
+    "form": {
+      "url": "URL",
+      "slug": "สลาก",
+      "comment": "ความคิดเห็น",
+      "expiration": "วันหมดอายุ",
+      "pick_date": "เลือกวันที่"
+    },
+    "sort": {
+      "newest": "ใหม่ที่สุด",
+      "oldest": "เก่าสุด",
+      "az": "สลาก A-Z",
+      "za": "สลาก Z-A",
+      "tip": "ประสบการณ์: สำหรับลิงก์ที่โหลดแล้วเท่านั้น"
+    },
+    "update_failed": "อัปเดตลิงก์ล้มเหลว",
+    "create_failed": "สร้างลิงก์ล้มเหลว",
+    "ai_slug_failed": "สร้างสลาก AI ล้มเหลว"
+  },
+  "migrate": {
+    "export": {
+      "title": "ส่งออกลิงก์",
+      "description": "ดาวน์โหลดลิงก์ทั้งหมดของคุณเป็นไฟล์ JSON",
+      "button": "ส่งออกทั้งหมด",
+      "total_links": "ลิงก์ทั้งหมด",
+      "success": "ส่งออกสำเร็จ",
+      "failed": "ส่งออกล้มเหลว"
+    },
+    "import": {
+      "title": "นำเข้าลิงก์",
+      "description": "อัปโหลดไฟล์ JSON เพื่อนำเข้าลิงก์",
+      "dropzone": "วางไฟล์ JSON ที่นี่หรือคลิกเพื่ออัปโหลด",
+      "links_found": "ลิงก์ที่พบ",
+      "button": "เริ่มนำเข้า",
+      "importing": "กำลังนำเข้า...",
+      "import_more": "นำเข้าเพิ่มเติม",
+      "download_success": "ดาวน์โหลดรายการที่สำเร็จ",
+      "download_skipped": "ดาวน์โหลดรายการที่ข้าม",
+      "download_failed": "ดาวน์โหลดรายการที่ล้มเหลว",
+      "result": {
+        "title": "ผลการนำเข้า",
+        "success": "นำเข้าเรียบร้อยแล้ว",
+        "skipped": "ข้าม (มีอยู่แล้ว)",
+        "failed": "ล้มเหลว",
+        "success_message": "{count} ลิงก์นำเข้าเรียบร้อยแล้ว"
+      },
+      "errors": {
+        "invalid_json": "ไฟล์ JSON ไม่ถูกต้อง",
+        "invalid_format": "รูปแบบไฟล์ไม่ถูกต้อง โปรดใช้ไฟล์ที่ส่งออกจาก Sink",
+        "no_links": "ไม่พบลิงก์ในไฟล์",
+        "parse_error": "ไม่สามารถแยกวิเคราะห์ไฟล์ได้"
+      }
+    }
+  }
+}
