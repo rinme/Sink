@@ -37,6 +37,12 @@ const locales: LocaleObject[] = [
     name: 'Deutsch',
     emoji: '🇩🇪',
   },
+  {
+    code: 'th-TH',
+    file: 'th-TH.json',
+    name: 'ไทย',
+    emoji: '🇹🇭',
+  },
 ]
 
 function buildLocales() {
