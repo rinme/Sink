@@ -5,7 +5,7 @@
 3. Update the `kv_namespaces` ID in `wrangler.jsonc` with your own namespace ID.
 4. Create a project in [Cloudflare Workers](https://developers.cloudflare.com/workers/).
 5. Select the `Sink` repository and use the following build and deploy commands:
-   - **Build command**: `pnpm run build` or `npm run build`
+   - **Build command**: `bun run build` or `npm run build`
    - **Deploy command**: `npx wrangler deploy`
 
 6. Save and deploy the project.

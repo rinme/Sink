@@ -38,35 +38,35 @@ i18n/                   # Internationalization files
 
 ## Build, Test, and Development Commands
 
-Use **pnpm** (v10+) with **Node.js 20.11+**.
+Use **bun** (v1+) with **Node.js 20.11+**.
 
 ### Development
 
 ```bash
-pnpm dev                  # Start Nuxt dev server on port 7465
-pnpm preview              # Full Worker preview via wrangler dev
+bun run dev              # Start Nuxt dev server on port 7465
+bun run preview          # Full Worker preview via wrangler dev
 ```
 
 ### Building
 
 ```bash
-pnpm build                # Production build (nuxt build + map generator)
-pnpm build:map            # Generate country map data
-pnpm build:colo           # Generate Cloudflare colo data
+bun run build                # Production build (nuxt build + map generator)
+bun run build:map            # Generate country map data
+bun run build:colo           # Generate Cloudflare colo data
 ```
 
 ### Linting
 
 ```bash
-pnpm lint:fix             # Run ESLint with auto-fix
-pnpm types:check          # TypeScript type checking
+bun run lint:fix             # Run ESLint with auto-fix
+bun run types:check          # TypeScript type checking
 ```
 
 ### Deployment
 
 ```bash
-pnpm deploy:pages         # Deploy to Cloudflare Pages
-pnpm deploy:worker        # Deploy to Cloudflare Workers
+bun run deploy:pages         # Deploy to Cloudflare Pages
+bun run deploy:worker        # Deploy to Cloudflare Workers
 ```
 
 ## Code Style Guidelines
@@ -220,4 +220,4 @@ refactor: simplify link store logic
 
 - `simple-git-hooks` runs `lint-staged` on commit
 - `lint-staged` runs `eslint --fix` on staged `.js`, `.ts`, `.tsx`, `.vue` files
-- Always run `pnpm lint:fix` before committing
+- Always run `bun run lint:fix` before committing

@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.2.2",
   "private": true,
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "bun@1.2.6",
   "engines": {
     "node": ">=20.11"
   },
@@ -20,11 +20,11 @@
     "types:check": "nuxt typecheck",
     "wrangler": "wrangler",
     "gen:types": "wrangler types",
-    "deploy": "npm run deploy:pages",
+    "deploy": "bun run deploy:pages",
     "deploy:pages": "wrangler pages deploy dist",
     "deploy:worker": "wrangler deploy .output/server/index.mjs --assets .output/public",
     "preview": "wrangler dev .output/server/index.mjs --assets .output/public ",
-    "postinstall": "npm run build:map && nuxt prepare",
+    "postinstall": "bun run build:map && nuxt prepare",
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
@@ -90,7 +90,7 @@
     "wrangler": "^4.59.2"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm run lint-staged"
+    "pre-commit": "bun run lint-staged"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue}": [
