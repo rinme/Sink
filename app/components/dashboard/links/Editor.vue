@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<{
 
 const { t } = useI18n()
 const linksStore = useDashboardLinksStore()
-const link = ref(props.link)
+const link = computed(() => props.link)
 const dialogOpen = ref(false)
 const isEdit = !!props.link.id
 const { previewMode } = useRuntimeConfig().public
@@ -145,6 +145,20 @@ async function aiSlug() {
     aiSlugPending.value = false
   }
 }
+
+// Reset form values when dialog opens to reflect current link data
+watch(dialogOpen, (open) => {
+  if (open) {
+    form.setFieldValue('url', link.value.url ?? '')
+    form.setFieldValue('slug', link.value.slug ?? '')
+    form.setFieldValue('comment', link.value.comment ?? '')
+    form.setFieldValue('expiration', link.value.expiration
+      ? unix2date(link.value.expiration)
+      : undefined as DateValue | undefined)
+    form.setFieldValue('timer', link.value.timer ?? undefined as number | undefined)
+    form.setFieldValue('nsfw', link.value.nsfw ?? false)
+  }
+})
 
 // Date picker state
 const datePickerOpen = ref(false)
