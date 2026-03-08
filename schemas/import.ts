@@ -13,6 +13,8 @@ const ImportLinkSchema = z.object({
   title: z.string().trim().max(2048).optional(),
   description: z.string().trim().max(2048).optional(),
   image: z.string().trim().url().max(2048).optional(),
+  timer: z.number().int().min(1).max(60).optional(),
+  nsfw: z.boolean().optional(),
 })
 
 export const ImportDataSchema = z.object({

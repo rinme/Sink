@@ -201,7 +201,11 @@
       "slug": "Slug",
       "comment": "Comment",
       "expiration": "Expiration",
-      "pick_date": "Pick a date"
+      "pick_date": "Pick a date",
+      "timer": "Redirect Timer (seconds)",
+      "timer_placeholder": "e.g. 3",
+      "nsfw": "NSFW",
+      "nsfw_description": "Require age verification before redirecting"
     },
     "sort": {
       "newest": "Newest First",
