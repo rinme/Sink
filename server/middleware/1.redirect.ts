@@ -16,6 +16,7 @@ function renderTimerPage(target: string, seconds: number): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="${seconds}; url=${target.replace(/"/g, '&quot;')}">
 <title>Redirecting...</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -52,7 +53,7 @@ function renderTimerPage(target: string, seconds: number): string {
 </html>`
 }
 
-function renderNsfwPage(slug: string, token: string): string {
+function renderNsfwPage(slug: string, token: string, currentYear: number): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,7 +83,7 @@ function renderNsfwPage(slug: string, token: string): string {
   <p class="subtitle">This link has been marked as NSFW. You must be at least 18 years old to proceed.</p>
   <form id="age-form">
     <label for="birth-year">Enter your birth year</label>
-    <input type="number" id="birth-year" placeholder="e.g. 1990" min="1900" max="2026" required>
+    <input type="number" id="birth-year" placeholder="e.g. 1990" min="1900" max="${currentYear}" required>
     <p class="error" id="error-msg"></p>
     <button type="submit">Verify Age</button>
   </form>
@@ -94,19 +95,20 @@ function renderNsfwPage(slug: string, token: string): string {
     var errorEl = document.getElementById('error-msg');
     var slug = ${JSON.stringify(slug)};
     var token = ${JSON.stringify(token)};
+    var currentYear = ${currentYear};
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       errorEl.style.display = 'none';
 
       var year = parseInt(input.value, 10);
-      if (isNaN(year) || year < 1900 || year > 2026) {
+      if (isNaN(year) || year < 1900 || year > currentYear) {
         errorEl.textContent = 'Please enter a valid birth year.';
         errorEl.style.display = 'block';
         return;
       }
 
-      var age = 2026 - year;
+      var age = currentYear - year;
       if (age < 18) {
         errorEl.textContent = 'You must be at least 18 years old to access this content.';
         errorEl.style.display = 'block';
@@ -149,13 +151,6 @@ export default eventHandler(async (event) => {
 
     if (link) {
       event.context.link = link
-      try {
-        await useAccessLog(event)
-      }
-      catch (error) {
-        console.error('Failed write access log:', error)
-      }
-      const target = redirectWithQuery ? withQuery(link.url, getQuery(event)) : link.url
 
       // NSFW verification: show age-check page if not yet verified
       if (link.nsfw) {
@@ -163,14 +158,26 @@ export default eventHandler(async (event) => {
         const expectedToken = await generateVerificationToken(slug, siteToken)
         if (query._verified !== expectedToken) {
           setResponseHeader(event, 'Content-Type', 'text/html')
-          return renderNsfwPage(slug, expectedToken)
+          return renderNsfwPage(slug, expectedToken, new Date().getFullYear())
         }
       }
+
+      // Strip _verified param so it is not forwarded to the destination
+      const rawQuery = getQuery(event)
+      const { _verified, ...safeQuery } = rawQuery as Record<string, unknown>
+      const target = redirectWithQuery ? withQuery(link.url, safeQuery) : link.url
 
       // Timer countdown: show countdown page before redirect
       if (link.timer && link.timer > 0) {
         setResponseHeader(event, 'Content-Type', 'text/html')
         return renderTimerPage(target, link.timer)
+      }
+
+      try {
+        await useAccessLog(event)
+      }
+      catch (error) {
+        console.error('Failed write access log:', error)
       }
 
       return sendRedirect(event, target, +redirectStatusCode)
