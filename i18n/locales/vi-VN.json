@@ -191,7 +191,11 @@
       "slug": "Slug",
       "comment": "Ghi chú",
       "expiration": "Hết hạn",
-      "pick_date": "Chọn ngày"
+      "pick_date": "Chọn ngày",
+      "timer": "Bộ đếm chuyển hướng (giây)",
+      "timer_placeholder": "ví dụ 3",
+      "nsfw": "NSFW",
+      "nsfw_description": "Yêu cầu xác minh tuổi trước khi chuyển hướng"
     },
     "sort": {
       "newest": "Mới nhất trước",

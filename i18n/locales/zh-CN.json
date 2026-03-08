@@ -201,7 +201,11 @@
       "slug": "短链",
       "comment": "备注",
       "expiration": "过期时间",
-      "pick_date": "选择日期"
+      "pick_date": "选择日期",
+      "timer": "跳转倒计时（秒）",
+      "timer_placeholder": "例如 3",
+      "nsfw": "NSFW",
+      "nsfw_description": "重定向前需要年龄验证"
     },
     "sort": {
       "newest": "最新",

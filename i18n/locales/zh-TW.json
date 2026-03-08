@@ -191,7 +191,11 @@
       "slug": "短連結",
       "comment": "備註",
       "expiration": "過期時間",
-      "pick_date": "選擇日期"
+      "pick_date": "選擇日期",
+      "timer": "跳轉倒計時（秒）",
+      "timer_placeholder": "例如 3",
+      "nsfw": "NSFW",
+      "nsfw_description": "重定向前需要年齡驗證"
     },
     "sort": {
       "newest": "最新",

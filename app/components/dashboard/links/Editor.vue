@@ -4,7 +4,7 @@ import type { Link } from '@/types'
 import { LinkSchema, nanoid } from '@@/schemas/link'
 import { today } from '@internationalized/date'
 import { useForm } from '@tanstack/vue-form'
-import { CalendarIcon, Shuffle, Sparkles } from 'lucide-vue-next'
+import { CalendarIcon, ShieldAlert, Shuffle, Sparkles, Timer } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
 import { cn } from '@/lib/utils'
@@ -26,6 +26,7 @@ const { previewMode } = useRuntimeConfig().public
 const urlValidator = LinkSchema.shape.url
 const slugValidator = LinkSchema.shape.slug
 const commentValidator = z.string().max(500).optional()
+const timerValidator = z.coerce.number().int().min(1).max(60).optional()
 
 // Generate slug using nanoid
 const generateSlug = nanoid()
@@ -39,6 +40,8 @@ const form = useForm({
     expiration: link.value.expiration
       ? unix2date(link.value.expiration)
       : undefined as DateValue | undefined,
+    timer: link.value.timer ?? undefined as number | undefined,
+    nsfw: link.value.nsfw ?? false,
   },
   onSubmit: async ({ value }) => {
     try {
@@ -49,6 +52,8 @@ const form = useForm({
         expiration: value.expiration
           ? date2unix(value.expiration, 'end')
           : undefined,
+        timer: value.timer || undefined,
+        nsfw: value.nsfw || undefined,
       }
       const { link: newLink } = await useAPI(
         isEdit ? '/api/link/edit' : '/api/link/create',
@@ -83,6 +88,13 @@ function validateSlug({ value }: { value: string }) {
 
 function validateComment({ value }: { value: string }) {
   const result = commentValidator.safeParse(value)
+  return result.success ? undefined : result.error.errors[0]?.message
+}
+
+function validateTimer({ value }: { value: number | undefined }) {
+  if (value === undefined || value === null || String(value) === '')
+    return undefined
+  const result = timerValidator.safeParse(value)
   return result.success ? undefined : result.error.errors[0]?.message
 }
 
@@ -301,6 +313,56 @@ const datePickerOpen = ref(false)
                 v-if="isInvalid(field)"
                 :errors="formatErrors(field.state.meta.errors)"
               />
+            </Field>
+          </form.Field>
+
+          <!-- Timer Field -->
+          <form.Field
+            v-slot="{ field }"
+            name="timer"
+            :validators="{ onBlur: validateTimer }"
+          >
+            <Field :data-invalid="isInvalid(field)">
+              <FieldLabel :for="field.name" class="flex items-center gap-2">
+                <Timer class="h-4 w-4" />
+                {{ $t('links.form.timer') }}
+              </FieldLabel>
+              <Input
+                :id="field.name"
+                :name="field.name"
+                type="number"
+                :model-value="field.state.value"
+                :aria-invalid="getAriaInvalid(field)"
+                :placeholder="$t('links.form.timer_placeholder')"
+                min="1"
+                max="60"
+                @blur="field.handleBlur"
+                @input="field.handleChange(($event.target as HTMLInputElement).value ? Number(($event.target as HTMLInputElement).value) : undefined)"
+              />
+              <FieldError
+                v-if="isInvalid(field)"
+                :errors="formatErrors(field.state.meta.errors)"
+              />
+            </Field>
+          </form.Field>
+
+          <!-- NSFW Field -->
+          <form.Field v-slot="{ field }" name="nsfw">
+            <Field>
+              <div class="flex items-center justify-between">
+                <FieldLabel :for="field.name" class="flex items-center gap-2">
+                  <ShieldAlert class="h-4 w-4" />
+                  {{ $t('links.form.nsfw') }}
+                </FieldLabel>
+                <Switch
+                  :id="field.name"
+                  :checked="field.state.value"
+                  @update:checked="field.handleChange"
+                />
+              </div>
+              <p class="text-xs text-muted-foreground">
+                {{ $t('links.form.nsfw_description') }}
+              </p>
             </Field>
           </form.Field>
         </FieldGroup>

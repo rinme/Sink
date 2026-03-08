@@ -191,7 +191,11 @@
       "slug": "Slug",
       "comment": "Commentaire",
       "expiration": "Expiration",
-      "pick_date": "Choisir une date"
+      "pick_date": "Choisir une date",
+      "timer": "Minuterie de redirection (secondes)",
+      "timer_placeholder": "ex. 3",
+      "nsfw": "NSFW",
+      "nsfw_description": "Vérification de l'âge requise avant la redirection"
     },
     "sort": {
       "newest": "Les plus récents",

@@ -191,7 +191,11 @@
       "slug": "Slug",
       "comment": "Kommentar",
       "expiration": "Ablaufdatum",
-      "pick_date": "Datum auswählen"
+      "pick_date": "Datum auswählen",
+      "timer": "Weiterleitungstimer (Sekunden)",
+      "timer_placeholder": "z.B. 3",
+      "nsfw": "NSFW",
+      "nsfw_description": "Altersverifizierung vor der Weiterleitung erforderlich"
     },
     "sort": {
       "newest": "Neueste zuerst",
