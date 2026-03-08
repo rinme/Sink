@@ -2,6 +2,14 @@ import type { LinkSchema } from '@@/schemas/link'
 import type { z } from 'zod'
 import { parsePath, withQuery } from 'ufo'
 
+async function generateVerificationToken(slug: string, secret: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(`nsfw:${slug}:${secret}`)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
 function renderTimerPage(target: string, seconds: number): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -44,7 +52,7 @@ function renderTimerPage(target: string, seconds: number): string {
 </html>`
 }
 
-function renderNsfwPage(slug: string, hasTimer: boolean, timerSeconds: number): string {
+function renderNsfwPage(slug: string, token: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,8 +93,7 @@ function renderNsfwPage(slug: string, hasTimer: boolean, timerSeconds: number): 
     var input = document.getElementById('birth-year');
     var errorEl = document.getElementById('error-msg');
     var slug = ${JSON.stringify(slug)};
-    var hasTimer = ${hasTimer ? 'true' : 'false'};
-    var timerSeconds = ${timerSeconds};
+    var token = ${JSON.stringify(token)};
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -106,7 +113,7 @@ function renderNsfwPage(slug: string, hasTimer: boolean, timerSeconds: number): 
         return;
       }
 
-      window.location.href = '/' + encodeURIComponent(slug) + '?_verified=1';
+      window.location.href = '/' + encodeURIComponent(slug) + '?_verified=' + encodeURIComponent(token);
     });
   })();
 </script>
@@ -117,7 +124,7 @@ function renderNsfwPage(slug: string, hasTimer: boolean, timerSeconds: number): 
 export default eventHandler(async (event) => {
   const { pathname: slug } = parsePath(event.path.replace(/^\/|\/$/g, '')) // remove leading and trailing slashes
   const { slugRegex, reserveSlug } = useAppConfig()
-  const { homeURL, linkCacheTtl, caseSensitive, redirectWithQuery, redirectStatusCode } = useRuntimeConfig(event)
+  const { homeURL, linkCacheTtl, caseSensitive, redirectWithQuery, redirectStatusCode, siteToken } = useRuntimeConfig(event)
   const { cloudflare } = event.context
 
   if (event.path === '/' && homeURL)
@@ -153,9 +160,10 @@ export default eventHandler(async (event) => {
       // NSFW verification: show age-check page if not yet verified
       if (link.nsfw) {
         const query = getQuery(event)
-        if (query._verified !== '1') {
+        const expectedToken = await generateVerificationToken(slug, siteToken)
+        if (query._verified !== expectedToken) {
           setResponseHeader(event, 'Content-Type', 'text/html')
-          return renderNsfwPage(slug, !!link.timer, link.timer ?? 0)
+          return renderNsfwPage(slug, expectedToken)
         }
       }
 

@@ -92,7 +92,7 @@ function validateComment({ value }: { value: string }) {
 }
 
 function validateTimer({ value }: { value: number | undefined }) {
-  if (value === undefined || value === null || String(value) === '')
+  if (!value && value !== 0)
     return undefined
   const result = timerValidator.safeParse(value)
   return result.success ? undefined : result.error.errors[0]?.message
