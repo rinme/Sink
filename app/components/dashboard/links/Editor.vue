@@ -53,7 +53,7 @@ const form = useForm({
           ? date2unix(value.expiration, 'end')
           : undefined,
         timer: value.timer || undefined,
-        nsfw: value.nsfw || undefined,
+        nsfw: value.nsfw,
       }
       const { link: newLink } = await useAPI(
         isEdit ? '/api/link/edit' : '/api/link/create',

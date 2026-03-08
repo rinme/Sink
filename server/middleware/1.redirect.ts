@@ -157,8 +157,7 @@ export default eventHandler(async (event) => {
         const query = getQuery(event)
         const expectedToken = await generateVerificationToken(slug, siteToken)
         if (query._verified !== expectedToken) {
-          setResponseHeader(event, 'Content-Type', 'text/html')
-          return renderNsfwPage(slug, expectedToken, new Date().getFullYear())
+          return send(event, renderNsfwPage(slug, expectedToken, new Date().getFullYear()), 'text/html')
         }
       }
 
@@ -169,8 +168,7 @@ export default eventHandler(async (event) => {
 
       // Timer countdown: show countdown page before redirect
       if (link.timer && link.timer > 0) {
-        setResponseHeader(event, 'Content-Type', 'text/html')
-        return renderTimerPage(target, link.timer)
+        return send(event, renderTimerPage(target, link.timer), 'text/html')
       }
 
       try {
