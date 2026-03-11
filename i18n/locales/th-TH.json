@@ -207,7 +207,26 @@
       "logo_custom": "กำหนดเอง",
       "logo_upload": "อัปโหลดรูป",
       "logo_change": "เปลี่ยนรูป",
-      "transparent_bg": "ไม่มีพื้นหลัง"
+      "logo_too_large": "รูปภาพต้องมีขนาดไม่เกิน 2MB",
+      "transparent_bg": "ไม่มีพื้นหลัง",
+      "download_format": "รูปแบบดาวน์โหลด",
+      "dot_styles": {
+        "dots": "จุด",
+        "rounded": "มน",
+        "square": "สี่เหลี่ยม",
+        "extra_rounded": "มนมาก",
+        "classy": "คลาสสิก",
+        "classy_rounded": "คลาสสิกมน"
+      },
+      "corner_square_styles": {
+        "square": "สี่เหลี่ยม",
+        "extra_rounded": "มนมาก",
+        "dot": "จุด"
+      },
+      "corner_dot_styles": {
+        "square": "สี่เหลี่ยม",
+        "dot": "จุด"
+      }
     },
     "form": {
       "url": "URL",

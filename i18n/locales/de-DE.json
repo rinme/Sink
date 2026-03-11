@@ -197,7 +197,26 @@
       "logo_custom": "Eigenes",
       "logo_upload": "Bild hochladen",
       "logo_change": "Bild ändern",
-      "transparent_bg": "Kein HG"
+      "logo_too_large": "Bild muss unter 2MB sein",
+      "transparent_bg": "Kein HG",
+      "download_format": "Downloadformat",
+      "dot_styles": {
+        "dots": "Punkte",
+        "rounded": "Abgerundet",
+        "square": "Quadratisch",
+        "extra_rounded": "Stark abgerundet",
+        "classy": "Elegant",
+        "classy_rounded": "Elegant abgerundet"
+      },
+      "corner_square_styles": {
+        "square": "Quadratisch",
+        "extra_rounded": "Stark abgerundet",
+        "dot": "Punkt"
+      },
+      "corner_dot_styles": {
+        "square": "Quadratisch",
+        "dot": "Punkt"
+      }
     },
     "form": {
       "url": "URL",

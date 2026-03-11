@@ -207,7 +207,26 @@
       "logo_custom": "Custom",
       "logo_upload": "Upload image",
       "logo_change": "Change image",
-      "transparent_bg": "No BG"
+      "logo_too_large": "Image must be under 2MB",
+      "transparent_bg": "No BG",
+      "download_format": "Download format",
+      "dot_styles": {
+        "dots": "Dots",
+        "rounded": "Rounded",
+        "square": "Square",
+        "extra_rounded": "Extra Rounded",
+        "classy": "Classy",
+        "classy_rounded": "Classy Rounded"
+      },
+      "corner_square_styles": {
+        "square": "Square",
+        "extra_rounded": "Extra Rounded",
+        "dot": "Dot"
+      },
+      "corner_dot_styles": {
+        "square": "Square",
+        "dot": "Dot"
+      }
     },
     "form": {
       "url": "URL",

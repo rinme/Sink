@@ -197,7 +197,26 @@
       "logo_custom": "自訂",
       "logo_upload": "上傳圖片",
       "logo_change": "更換圖片",
-      "transparent_bg": "透明背景"
+      "logo_too_large": "圖片大小不能超過2MB",
+      "transparent_bg": "透明背景",
+      "download_format": "下載格式",
+      "dot_styles": {
+        "dots": "圓點",
+        "rounded": "圓角",
+        "square": "方形",
+        "extra_rounded": "大圓角",
+        "classy": "經典",
+        "classy_rounded": "經典圓角"
+      },
+      "corner_square_styles": {
+        "square": "方形",
+        "extra_rounded": "大圓角",
+        "dot": "圓點"
+      },
+      "corner_dot_styles": {
+        "square": "方形",
+        "dot": "圓點"
+      }
     },
     "form": {
       "url": "連結地址",

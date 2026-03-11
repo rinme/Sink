@@ -2,6 +2,7 @@
 import type { CornerDotType, CornerSquareType, DotType } from 'qr-code-styling'
 import { Download, ImagePlus } from 'lucide-vue-next'
 import QRCodeStyling from 'qr-code-styling'
+import { toast } from 'vue-sonner'
 
 const props = withDefaults(defineProps<{
   data: string
@@ -9,6 +10,8 @@ const props = withDefaults(defineProps<{
 }>(), {
   image: '',
 })
+
+const MAX_LOGO_SIZE = 2 * 1024 * 1024 // 2MB
 
 const { t } = useI18n()
 
@@ -21,24 +24,24 @@ const downloadFormat = ref<'png' | 'svg'>('png')
 const logoMode = ref<'website' | 'custom' | 'none'>(props.image ? 'website' : 'none')
 const customLogoUrl = ref('')
 
-const DOT_STYLES: { value: DotType, label: string }[] = [
-  { value: 'dots', label: 'Dots' },
-  { value: 'rounded', label: 'Rounded' },
-  { value: 'square', label: 'Square' },
-  { value: 'extra-rounded', label: 'Extra Rounded' },
-  { value: 'classy', label: 'Classy' },
-  { value: 'classy-rounded', label: 'Classy Rounded' },
+const DOT_STYLES: { value: DotType, labelKey: string }[] = [
+  { value: 'dots', labelKey: 'links.qr.dot_styles.dots' },
+  { value: 'rounded', labelKey: 'links.qr.dot_styles.rounded' },
+  { value: 'square', labelKey: 'links.qr.dot_styles.square' },
+  { value: 'extra-rounded', labelKey: 'links.qr.dot_styles.extra_rounded' },
+  { value: 'classy', labelKey: 'links.qr.dot_styles.classy' },
+  { value: 'classy-rounded', labelKey: 'links.qr.dot_styles.classy_rounded' },
 ]
 
-const CORNER_SQUARE_STYLES: { value: CornerSquareType, label: string }[] = [
-  { value: 'square', label: 'Square' },
-  { value: 'extra-rounded', label: 'Extra Rounded' },
-  { value: 'dot', label: 'Dot' },
+const CORNER_SQUARE_STYLES: { value: CornerSquareType, labelKey: string }[] = [
+  { value: 'square', labelKey: 'links.qr.corner_square_styles.square' },
+  { value: 'extra-rounded', labelKey: 'links.qr.corner_square_styles.extra_rounded' },
+  { value: 'dot', labelKey: 'links.qr.corner_square_styles.dot' },
 ]
 
-const CORNER_DOT_STYLES: { value: CornerDotType, label: string }[] = [
-  { value: 'square', label: 'Square' },
-  { value: 'dot', label: 'Dot' },
+const CORNER_DOT_STYLES: { value: CornerDotType, labelKey: string }[] = [
+  { value: 'square', labelKey: 'links.qr.corner_dot_styles.square' },
+  { value: 'dot', labelKey: 'links.qr.corner_dot_styles.dot' },
 ]
 
 const currentImage = computed(() => {
@@ -68,6 +71,7 @@ const qrCodeEl = ref<HTMLElement | null>(null)
 
 function updateQrCode() {
   qrCode.update({
+    data: props.data,
     dotsOptions: { type: dotStyle.value, color: color.value, gradient: null },
     cornersSquareOptions: { type: cornerSquareStyle.value, color: color.value },
     cornersDotOptions: { type: cornerDotStyle.value, color: color.value },
@@ -76,24 +80,37 @@ function updateQrCode() {
   })
 }
 
-watch([color, dotStyle, cornerSquareStyle, cornerDotStyle, transparentBg, logoMode, customLogoUrl], () => {
-  updateQrCode()
-})
+watch(
+  [color, dotStyle, cornerSquareStyle, cornerDotStyle, transparentBg, currentImage, () => props.data],
+  () => {
+    updateQrCode()
+  },
+)
+
+function revokeCustomLogo() {
+  if (customLogoUrl.value) {
+    URL.revokeObjectURL(customLogoUrl.value)
+    customLogoUrl.value = ''
+  }
+}
 
 function onCustomLogoUpload(event: Event) {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
-  if (file) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      customLogoUrl.value = e.target?.result as string
-    }
-    reader.onerror = () => {
-      customLogoUrl.value = ''
-    }
-    reader.readAsDataURL(file)
+  if (!file)
+    return
+  if (file.size > MAX_LOGO_SIZE) {
+    toast.error(t('links.qr.logo_too_large'))
+    target.value = ''
+    return
   }
+  revokeCustomLogo()
+  customLogoUrl.value = URL.createObjectURL(file)
 }
+
+onBeforeUnmount(() => {
+  revokeCustomLogo()
+})
 
 function downloadQRCode() {
   const slug = props.data.split('/').pop()
@@ -156,7 +173,7 @@ onMounted(() => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem v-for="style in DOT_STYLES" :key="style.value" :value="style.value">
-              {{ style.label }}
+              {{ t(style.labelKey) }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -170,7 +187,7 @@ onMounted(() => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem v-for="style in CORNER_SQUARE_STYLES" :key="style.value" :value="style.value">
-              {{ style.label }}
+              {{ t(style.labelKey) }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -184,7 +201,7 @@ onMounted(() => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem v-for="style in CORNER_DOT_STYLES" :key="style.value" :value="style.value">
-              {{ style.label }}
+              {{ t(style.labelKey) }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -232,7 +249,7 @@ onMounted(() => {
 
       <div class="flex items-center gap-3">
         <Select v-model="downloadFormat">
-          <SelectTrigger class="h-8 w-20 text-xs">
+          <SelectTrigger class="h-8 w-20 text-xs" :aria-label="t('links.qr.download_format')">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
