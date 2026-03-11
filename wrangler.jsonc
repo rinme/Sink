@@ -34,7 +34,7 @@
     {
       "binding": "DB",
       "database_name": "sink-db",
-      "database_id": "00000000-0000-0000-0000-000000000000", // IMPORTANT: Replace with your D1 database ID after running `wrangler d1 create sink-db`
+      "database_id": "afe6ebc9-b0fc-4f22-b617-77319bc365d3", // IMPORTANT: Replace with your D1 database ID after running `wrangler d1 create sink-db`
       "migrations_dir": "migrations"
     }
   ],
