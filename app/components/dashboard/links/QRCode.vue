@@ -88,6 +88,9 @@ function onCustomLogoUpload(event: Event) {
     reader.onload = (e) => {
       customLogoUrl.value = e.target?.result as string
     }
+    reader.onerror = () => {
+      customLogoUrl.value = ''
+    }
     reader.readAsDataURL(file)
   }
 }
