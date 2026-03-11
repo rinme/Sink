@@ -19,6 +19,10 @@ export default eventHandler(async (event) => {
 
   const existingLink = await getLink(event, link.slug)
   if (existingLink) {
+    // Admins may upsert any link; regular users can only upsert their own
+    if (user.role !== 'admin' && existingLink.ownerUserId !== user.id) {
+      throw createError({ status: 403, statusText: 'You do not have permission to update this link' })
+    }
     const shortLink = buildShortLink(event, link.slug)
     return { link: existingLink, shortLink, status: 'existing' }
   }

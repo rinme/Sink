@@ -24,7 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_api_tokens_user ON api_tokens(user_id);
 CREATE TABLE IF NOT EXISTS links (
   id TEXT NOT NULL,
   url TEXT NOT NULL,
-  slug TEXT NOT NULL UNIQUE,
+  slug TEXT NOT NULL PRIMARY KEY,
   owner_user_id TEXT NOT NULL,
   comment TEXT,
   created_at INTEGER NOT NULL,
@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS links (
   FOREIGN KEY(owner_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_links_slug ON links(slug);
 CREATE INDEX IF NOT EXISTS idx_links_owner ON links(owner_user_id);
 
 CREATE TABLE IF NOT EXISTS banned_slugs (

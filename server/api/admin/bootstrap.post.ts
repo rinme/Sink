@@ -22,7 +22,7 @@ export default eventHandler(async (event) => {
   const existing = await DB.prepare(
     `SELECT COUNT(*) as cnt FROM users WHERE id != ?`,
   ).bind(SITE_TOKEN_USER_ID).first<{ cnt: number }>()
-  if (existing && existing.cnt > 0) {
+  if ((existing?.cnt ?? 0) > 0) {
     throw createError({ status: 409, statusText: 'Admin user already exists. Use /api/admin/tokens to create more.' })
   }
 

@@ -149,7 +149,7 @@ export default eventHandler(async (event) => {
     if (link) {
       // Check expiration
       if (link.expiration && link.expiration < Math.floor(Date.now() / 1000)) {
-        return
+        throw createError({ status: 410, statusText: 'Link has expired' })
       }
 
       event.context.link = link
