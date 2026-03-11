@@ -186,6 +186,19 @@
     "load_failed": "Tải liên kết thất bại,",
     "download_qr_code": "Tải mã QR",
     "change_qr_color": "Thay đổi màu mã QR",
+    "qr": {
+      "color": "Màu",
+      "dot_style": "Chấm",
+      "corner_style": "Góc",
+      "corner_dot": "Chấm góc",
+      "logo": "Logo",
+      "logo_none": "Không",
+      "logo_website": "Website",
+      "logo_custom": "Tùy chỉnh",
+      "logo_upload": "Tải ảnh lên",
+      "logo_change": "Đổi ảnh",
+      "transparent_bg": "Không nền"
+    },
     "form": {
       "url": "URL",
       "slug": "Slug",

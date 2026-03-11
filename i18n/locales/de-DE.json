@@ -186,6 +186,19 @@
     "load_failed": "Laden der Links fehlgeschlagen,",
     "download_qr_code": "QR-Code herunterladen",
     "change_qr_color": "QR-Code-Farbe ändern",
+    "qr": {
+      "color": "Farbe",
+      "dot_style": "Punkte",
+      "corner_style": "Ecken",
+      "corner_dot": "Eckpunkte",
+      "logo": "Logo",
+      "logo_none": "Keins",
+      "logo_website": "Website",
+      "logo_custom": "Eigenes",
+      "logo_upload": "Bild hochladen",
+      "logo_change": "Bild ändern",
+      "transparent_bg": "Kein HG"
+    },
     "form": {
       "url": "URL",
       "slug": "Slug",

@@ -104,7 +104,7 @@ function copyLink() {
                 @click.prevent
               />
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent class="w-80">
               <QRCode
                 :data="shortLink"
                 :image="linkIcon"

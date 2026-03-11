@@ -196,6 +196,19 @@
     "load_failed": "โหลดลิงก์ล้มเหลว",
     "download_qr_code": "ดาวน์โหลด QR Code",
     "change_qr_color": "เปลี่ยนสี QR code",
+    "qr": {
+      "color": "สี",
+      "dot_style": "จุด",
+      "corner_style": "มุม",
+      "corner_dot": "จุดมุม",
+      "logo": "โลโก้",
+      "logo_none": "ไม่มี",
+      "logo_website": "เว็บไซต์",
+      "logo_custom": "กำหนดเอง",
+      "logo_upload": "อัปโหลดรูป",
+      "logo_change": "เปลี่ยนรูป",
+      "transparent_bg": "ไม่มีพื้นหลัง"
+    },
     "form": {
       "url": "URL",
       "slug": "สลาก",

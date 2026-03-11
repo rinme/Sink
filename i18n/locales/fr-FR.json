@@ -186,6 +186,19 @@
     "load_failed": "Échec du chargement des liens,",
     "download_qr_code": "Télécharger le code QR",
     "change_qr_color": "Changer la couleur du code QR",
+    "qr": {
+      "color": "Couleur",
+      "dot_style": "Points",
+      "corner_style": "Coins",
+      "corner_dot": "Pts coins",
+      "logo": "Logo",
+      "logo_none": "Aucun",
+      "logo_website": "Site web",
+      "logo_custom": "Personnalisé",
+      "logo_upload": "Télécharger image",
+      "logo_change": "Changer image",
+      "transparent_bg": "Sans fond"
+    },
     "form": {
       "url": "URL",
       "slug": "Slug",

@@ -186,6 +186,19 @@
     "load_failed": "加載連接失敗,",
     "download_qr_code": "下載QR code",
     "change_qr_color": "更改二維碼顏色",
+    "qr": {
+      "color": "顏色",
+      "dot_style": "點樣式",
+      "corner_style": "角樣式",
+      "corner_dot": "角點",
+      "logo": "Logo",
+      "logo_none": "無",
+      "logo_website": "網站",
+      "logo_custom": "自訂",
+      "logo_upload": "上傳圖片",
+      "logo_change": "更換圖片",
+      "transparent_bg": "透明背景"
+    },
     "form": {
       "url": "連結地址",
       "slug": "短連結",
