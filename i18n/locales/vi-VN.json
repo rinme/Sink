@@ -186,6 +186,38 @@
     "load_failed": "Tải liên kết thất bại,",
     "download_qr_code": "Tải mã QR",
     "change_qr_color": "Thay đổi màu mã QR",
+    "qr": {
+      "color": "Màu",
+      "dot_style": "Chấm",
+      "corner_style": "Góc",
+      "corner_dot": "Chấm góc",
+      "logo": "Logo",
+      "logo_none": "Không",
+      "logo_website": "Website",
+      "logo_custom": "Tùy chỉnh",
+      "logo_upload": "Tải ảnh lên",
+      "logo_change": "Đổi ảnh",
+      "logo_too_large": "Ảnh phải dưới 2MB",
+      "transparent_bg": "Không nền",
+      "download_format": "Định dạng tải xuống",
+      "dot_styles": {
+        "dots": "Chấm",
+        "rounded": "Bo tròn",
+        "square": "Vuông",
+        "extra_rounded": "Bo tròn nhiều",
+        "classy": "Cổ điển",
+        "classy_rounded": "Cổ điển bo tròn"
+      },
+      "corner_square_styles": {
+        "square": "Vuông",
+        "extra_rounded": "Bo tròn nhiều",
+        "dot": "Chấm"
+      },
+      "corner_dot_styles": {
+        "square": "Vuông",
+        "dot": "Chấm"
+      }
+    },
     "form": {
       "url": "URL",
       "slug": "Slug",

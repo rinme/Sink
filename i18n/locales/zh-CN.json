@@ -196,6 +196,38 @@
     "load_failed": "加载链接失败,",
     "download_qr_code": "下载二维码",
     "change_qr_color": "更改二维码颜色",
+    "qr": {
+      "color": "颜色",
+      "dot_style": "点样式",
+      "corner_style": "角样式",
+      "corner_dot": "角点",
+      "logo": "Logo",
+      "logo_none": "无",
+      "logo_website": "网站",
+      "logo_custom": "自定义",
+      "logo_upload": "上传图片",
+      "logo_change": "更换图片",
+      "logo_too_large": "图片大小不能超过2MB",
+      "transparent_bg": "透明背景",
+      "download_format": "下载格式",
+      "dot_styles": {
+        "dots": "圆点",
+        "rounded": "圆角",
+        "square": "方形",
+        "extra_rounded": "大圆角",
+        "classy": "经典",
+        "classy_rounded": "经典圆角"
+      },
+      "corner_square_styles": {
+        "square": "方形",
+        "extra_rounded": "大圆角",
+        "dot": "圆点"
+      },
+      "corner_dot_styles": {
+        "square": "方形",
+        "dot": "圆点"
+      }
+    },
     "form": {
       "url": "链接地址",
       "slug": "短链",

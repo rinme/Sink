@@ -196,6 +196,38 @@
     "load_failed": "Loading links failed,",
     "download_qr_code": "Download QR Code",
     "change_qr_color": "Change QR code color",
+    "qr": {
+      "color": "Color",
+      "dot_style": "Dots",
+      "corner_style": "Corners",
+      "corner_dot": "Cor. Dots",
+      "logo": "Logo",
+      "logo_none": "None",
+      "logo_website": "Website",
+      "logo_custom": "Custom",
+      "logo_upload": "Upload image",
+      "logo_change": "Change image",
+      "logo_too_large": "Image must be under 2MB",
+      "transparent_bg": "No BG",
+      "download_format": "Download format",
+      "dot_styles": {
+        "dots": "Dots",
+        "rounded": "Rounded",
+        "square": "Square",
+        "extra_rounded": "Extra Rounded",
+        "classy": "Classy",
+        "classy_rounded": "Classy Rounded"
+      },
+      "corner_square_styles": {
+        "square": "Square",
+        "extra_rounded": "Extra Rounded",
+        "dot": "Dot"
+      },
+      "corner_dot_styles": {
+        "square": "Square",
+        "dot": "Dot"
+      }
+    },
     "form": {
       "url": "URL",
       "slug": "Slug",
