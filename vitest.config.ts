@@ -14,6 +14,7 @@ export default defineWorkersConfig(({ mode }) => ({
         },
         miniflare: {
           cf: true,
+          d1Databases: ['DB'],
         },
       },
     },

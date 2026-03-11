@@ -6,8 +6,16 @@ const ListQuerySchema = z.object({
 })
 
 export default eventHandler(async (event) => {
+  const user = event.context.user
+  if (!user?.id) {
+    throw createError({ status: 401, statusText: 'Unauthorized' })
+  }
+
   const { limit, cursor } = await getValidatedQuery(event, ListQuerySchema.parse)
 
-  const list = await listLinks(event, { limit, cursor })
+  // Admins see all links; regular users see only their own
+  const ownerUserId = user.role === 'admin' ? undefined : user.id
+
+  const list = await listLinks(event, { limit, cursor, ownerUserId })
   return list
 })

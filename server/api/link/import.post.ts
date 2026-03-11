@@ -17,6 +17,11 @@ interface ImportResult {
 }
 
 export default eventHandler(async (event) => {
+  const user = event.context.user
+  if (!user?.id) {
+    throw createError({ status: 401, statusText: 'Unauthorized' })
+  }
+
   const kvBatchLimit = useRuntimeConfig(event).public.kvBatchLimit as string
   const maxLinks = Math.floor(+kvBatchLimit / 2)
 
@@ -43,6 +48,14 @@ export default eventHandler(async (event) => {
 
     try {
       const slug = normalizeSlug(event, linkData.slug)
+
+      // Check if slug is banned
+      if (await isSlugBanned(event, slug)) {
+        result.failedItems.push({ index: i, slug, url: linkData.url, reason: 'Slug is banned or reserved' })
+        result.failed++
+        continue
+      }
+
       const existingLink = await getLink(event, slug)
 
       if (existingLink) {
@@ -56,6 +69,7 @@ export default eventHandler(async (event) => {
         id: linkData.id || nanoid(10)(),
         url: linkData.url,
         slug,
+        ownerUserId: user.id,
         comment: linkData.comment,
         createdAt: linkData.createdAt || now,
         updatedAt: linkData.updatedAt || now,
@@ -63,6 +77,8 @@ export default eventHandler(async (event) => {
         title: linkData.title,
         description: linkData.description,
         image: linkData.image,
+        timer: linkData.timer,
+        nsfw: linkData.nsfw,
       }
 
       await putLink(event, link)

@@ -1,7 +1,6 @@
 /// <reference path="../../worker-configuration.d.ts" />
 
 import type { Link } from '@@/app/types'
-import pLimit from 'p-limit'
 
 interface BackupData {
   version: string
@@ -10,35 +9,55 @@ interface BackupData {
   links: Link[]
 }
 
-async function backupKVToR2(env: Cloudflare.Env): Promise<void> {
+async function backupD1ToR2(env: Cloudflare.Env): Promise<void> {
   if (!env.R2) {
-    console.info('[backup:kv] R2 binding not configured, skipping backup')
+    console.info('[backup:d1] R2 binding not configured, skipping backup')
+    return
+  }
+
+  if (!env.DB) {
+    console.info('[backup:d1] D1 database not configured, skipping backup')
     return
   }
 
   const allLinks: Link[] = []
-  let cursor: string | undefined
+  const pageSize = 1000
+  let offset = 0
 
-  do {
-    const list = await env.KV.list({
-      prefix: 'link:',
-      limit: 1000,
-      cursor,
-    })
+  while (true) {
+    const result = await env.DB.prepare(
+      `SELECT * FROM links ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+    ).bind(pageSize, offset).all<{
+      id: string, url: string, slug: string, owner_user_id: string,
+      comment: string | null, created_at: number, updated_at: number,
+      expiration: number | null, title: string | null, description: string | null,
+      image: string | null, timer: number | null, nsfw: number,
+    }>()
 
-    const limit = pLimit(10)
-    const links = await Promise.all(
-      list.keys.map(key =>
-        limit(async () => {
-          const value = await env.KV.get(key.name, { type: 'json' })
-          return value as Link | null
-        }),
-      ),
-    )
+    const rows = result.results ?? []
 
-    allLinks.push(...links.filter((link): link is Link => link !== null))
-    cursor = list.list_complete ? undefined : list.cursor
-  } while (cursor)
+    const links = rows.map(row => ({
+      id: row.id,
+      url: row.url,
+      slug: row.slug,
+      ownerUserId: row.owner_user_id,
+      comment: row.comment ?? undefined,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      expiration: row.expiration ?? undefined,
+      title: row.title ?? undefined,
+      description: row.description ?? undefined,
+      image: row.image ?? undefined,
+      timer: row.timer ?? undefined,
+      nsfw: row.nsfw === 1 ? true : undefined,
+    } as Link))
+
+    allLinks.push(...links)
+
+    if (rows.length < pageSize)
+      break
+    offset += rows.length
+  }
 
   const now = new Date()
   const backupData: BackupData = {
@@ -61,7 +80,7 @@ async function backupKVToR2(env: Cloudflare.Env): Promise<void> {
     },
   })
 
-  console.info(`[backup:kv] Backup completed: ${filename}, ${allLinks.length} links`)
+  console.info(`[backup:d1] Backup completed: ${filename}, ${allLinks.length} links`)
 }
 
 export default defineNitroPlugin((nitroApp) => {
@@ -69,11 +88,11 @@ export default defineNitroPlugin((nitroApp) => {
     const config = useRuntimeConfig()
 
     if (config.disableAutoBackup) {
-      console.info('[backup:kv] Auto backup is disabled by configuration')
+      console.info('[backup:d1] Auto backup is disabled by configuration')
       return
     }
 
     const env = event.env as Cloudflare.Env
-    await backupKVToR2(env)
+    await backupD1ToR2(env)
   })
 })

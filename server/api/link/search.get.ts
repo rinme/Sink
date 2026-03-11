@@ -1,73 +1,29 @@
-interface Link {
-  slug: string
-  url: string
-  comment?: string
-}
-
 export default eventHandler(async (event) => {
-  const { cloudflare } = event.context
-  const { KV } = cloudflare.env
-  const list: Link[] = []
-  let finalCursor: string | undefined
-
-  try {
-    while (true) {
-      const { keys, list_complete, cursor } = await KV.list({
-        prefix: `link:`,
-        limit: 1000,
-        cursor: finalCursor,
-      })
-
-      finalCursor = cursor
-
-      if (Array.isArray(keys)) {
-        for (const key of keys) {
-          try {
-            if (key.metadata?.url) {
-              list.push({
-                slug: key.name.replace('link:', ''),
-                url: key.metadata.url,
-                comment: key.metadata.comment,
-              })
-            }
-            else {
-              // Forward compatible with links without metadata
-              const { metadata, value: link } = await KV.getWithMetadata(key.name, { type: 'json' })
-              if (link) {
-                list.push({
-                  slug: key.name.replace('link:', ''),
-                  url: link.url,
-                  comment: link.comment,
-                })
-                await KV.put(key.name, JSON.stringify(link), {
-                  expiration: metadata?.expiration,
-                  metadata: {
-                    ...metadata,
-                    url: link.url,
-                    comment: link.comment,
-                  },
-                })
-              }
-            }
-          }
-          catch (err) {
-            console.error(`Error processing key ${key.name}:`, err)
-            continue // Skip this key and continue with the next one
-          }
-        }
-      }
-
-      if (!keys || list_complete) {
-        break
-      }
-    }
-    return list
+  const user = event.context.user
+  if (!user?.id) {
+    throw createError({ status: 401, statusText: 'Unauthorized' })
   }
-  catch (err) {
-    console.error('Error fetching link list:', err)
-    throw createError({
-      status: 500,
-      statusText: 'Failed to fetch link list',
-    })
+
+  const { DB } = event.context.cloudflare.env
+
+  // Admins see all links; regular users see only their own
+  let rows: Array<{ slug: string, url: string, comment: string | null }>
+  if (user.role === 'admin') {
+    const result = await DB.prepare(
+      `SELECT slug, url, comment FROM links ORDER BY created_at DESC`,
+    ).all<{ slug: string, url: string, comment: string | null }>()
+    rows = result.results ?? []
   }
+  else {
+    const result = await DB.prepare(
+      `SELECT slug, url, comment FROM links WHERE owner_user_id = ? ORDER BY created_at DESC`,
+    ).bind(user.id).all<{ slug: string, url: string, comment: string | null }>()
+    rows = result.results ?? []
+  }
+
+  return rows.map(row => ({
+    slug: row.slug,
+    url: row.url,
+    comment: row.comment ?? undefined,
+  }))
 })

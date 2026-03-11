@@ -10,12 +10,20 @@ interface ExportData {
 }
 
 export default eventHandler(async (event) => {
+  const user = event.context.user
+  if (!user?.id) {
+    throw createError({ status: 401, statusText: 'Unauthorized' })
+  }
+
   const query = getQuery(event)
   const cursor = query.cursor as string | undefined
   const kvBatchLimit = useRuntimeConfig(event).public.kvBatchLimit as string
   const limit = +kvBatchLimit
 
-  const list = await listLinks(event, { limit, cursor })
+  // Admins export all links; regular users export only their own
+  const ownerUserId = user.role === 'admin' ? undefined : user.id
+
+  const list = await listLinks(event, { limit, cursor, ownerUserId })
   const links = list.links.filter((link): link is Link => link !== null)
 
   const exportData: ExportData = {

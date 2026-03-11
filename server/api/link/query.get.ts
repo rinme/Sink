@@ -5,18 +5,22 @@ const QueryParamsSchema = z.object({
 })
 
 export default eventHandler(async (event) => {
-  const { slug } = await getValidatedQuery(event, QueryParamsSchema.parse)
-
-  const { link, metadata } = await getLinkWithMetadata(event, slug)
-  if (link) {
-    return {
-      ...metadata,
-      ...link,
-    }
+  const user = event.context.user
+  if (!user?.id) {
+    throw createError({ status: 401, statusText: 'Unauthorized' })
   }
 
-  throw createError({
-    status: 404,
-    statusText: 'Not Found',
-  })
+  const { slug } = await getValidatedQuery(event, QueryParamsSchema.parse)
+
+  const link = await getLink(event, slug)
+  if (!link) {
+    throw createError({ status: 404, statusText: 'Not Found' })
+  }
+
+  // Regular users can only query their own links
+  if (user.role !== 'admin' && link.ownerUserId !== user.id) {
+    throw createError({ status: 404, statusText: 'Not Found' })
+  }
+
+  return link
 })

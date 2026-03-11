@@ -14,6 +14,23 @@ export default eventHandler(async (event) => {
     })
   }
 
+  const user = event.context.user
+  if (!user?.id) {
+    throw createError({ status: 401, statusText: 'Unauthorized' })
+  }
+
   const { slug } = await readValidatedBody(event, DeleteSchema.parse)
-  await deleteLink(event, slug)
+
+  // Admins may delete any link; regular users can only delete their own
+  if (user.role !== 'admin') {
+    const deleted = await deleteLinkByOwner(event, slug, user.id)
+    if (!deleted) {
+      throw createError({ status: 404, statusText: 'Link not found or you do not have permission to delete it' })
+    }
+  }
+  else {
+    await deleteLink(event, slug)
+  }
+
+  setResponseStatus(event, 204)
 })

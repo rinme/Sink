@@ -1,9 +1,21 @@
 import { LinkSchema } from '@@/schemas/link'
 
 export default eventHandler(async (event) => {
-  const link = await readValidatedBody(event, LinkSchema.parse)
+  const user = event.context.user
+  if (!user?.id) {
+    throw createError({ status: 401, statusText: 'Unauthorized' })
+  }
+
+  const link = await readValidatedBody(event, body =>
+    LinkSchema.parse({ ...body, ownerUserId: user.id }),
+  )
 
   link.slug = normalizeSlug(event, link.slug)
+
+  // Check banned slugs
+  if (await isSlugBanned(event, link.slug)) {
+    throw createError({ status: 422, statusText: 'Slug is banned or reserved' })
+  }
 
   const existingLink = await getLink(event, link.slug)
   if (existingLink) {

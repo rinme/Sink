@@ -1,5 +1,5 @@
-import type { LinkSchema } from '@@/schemas/link'
 import type { z } from 'zod'
+import type { LinkSchema } from '@@/schemas/link'
 import { parsePath, withQuery } from 'ufo'
 
 async function generateVerificationToken(slug: string, secret: string): Promise<string> {
@@ -126,30 +126,32 @@ function renderNsfwPage(slug: string, token: string, currentYear: number): strin
 export default eventHandler(async (event) => {
   const { pathname: slug } = parsePath(event.path.replace(/^\/|\/$/g, '')) // remove leading and trailing slashes
   const { slugRegex, reserveSlug } = useAppConfig()
-  const { homeURL, linkCacheTtl, caseSensitive, redirectWithQuery, redirectStatusCode, siteToken } = useRuntimeConfig(event)
+  const { homeURL, caseSensitive, redirectWithQuery, redirectStatusCode, siteToken } = useRuntimeConfig(event)
   const { cloudflare } = event.context
 
   if (event.path === '/' && homeURL)
     return sendRedirect(event, homeURL)
 
   if (slug && !reserveSlug.includes(slug) && slugRegex.test(slug) && cloudflare) {
-    const { KV } = cloudflare.env
+    const { DB } = cloudflare.env
 
     let link: z.infer<typeof LinkSchema> | null = null
 
-    const getLink = async (key: string) =>
-      await KV.get(`link:${key}`, { type: 'json', cacheTtl: linkCacheTtl })
-
-    const lowerCaseSlug = slug.toLowerCase()
-    link = await getLink(caseSensitive ? slug : lowerCaseSlug)
+    const lookupSlug = caseSensitive ? slug : slug.toLowerCase()
+    link = await getLink(event, lookupSlug)
 
     // fallback to original slug if caseSensitive is false and the slug is not found
-    if (!caseSensitive && !link && lowerCaseSlug !== slug) {
-      console.log('original slug fallback:', `slug:${slug} lowerCaseSlug:${lowerCaseSlug}`)
-      link = await getLink(slug)
+    if (!caseSensitive && !link && lookupSlug !== slug) {
+      console.log('original slug fallback:', `slug:${slug} lowerCaseSlug:${lookupSlug}`)
+      link = await getLink(event, slug)
     }
 
     if (link) {
+      // Check expiration
+      if (link.expiration && link.expiration < Math.floor(Date.now() / 1000)) {
+        return
+      }
+
       event.context.link = link
 
       // NSFW verification: show age-check page if not yet verified
