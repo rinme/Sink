@@ -42,7 +42,7 @@ function onUpdateItems(...args) {
         v-for="item in logs"
         :key="item.id"
         :name="item.slug"
-        :description="[item.os, item.browser].filter(Boolean).join(' ')"
+        :description="[item.ip || '(unknown)', item.os, item.browser].filter(Boolean).join(' · ')"
         :icon="getFlag(item.country)"
         :time="item.timestamp"
         :item="item"
