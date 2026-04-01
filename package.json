@@ -89,6 +89,11 @@
     "workers-ai-provider": "^3.0.2",
     "wrangler": "^4.59.2"
   },
+  "pnpm": {
+    "overrides": {
+      "simple-git": "^3.33.0"
+    }
+  },
   "simple-git-hooks": {
     "pre-commit": "npm run lint-staged"
   },
