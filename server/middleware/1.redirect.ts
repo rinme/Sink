@@ -1,3 +1,4 @@
+import type { QueryObject } from 'ufo'
 import type { Link } from '@/types'
 import { parsePath, withQuery } from 'ufo'
 
@@ -86,7 +87,7 @@ export default eventHandler(async (event) => {
       }
       const userAgent = getHeader(event, 'user-agent') || ''
       const rawQuery = getQuery(event)
-      const { _verified, ...safeQuery } = rawQuery as Record<string, unknown>
+      const { _verified, ...safeQuery } = rawQuery as QueryObject
       const shouldRedirectWithQuery = link.redirectWithQuery ?? redirectWithQuery
       const buildTarget = (url: string) => shouldRedirectWithQuery ? withQuery(url, safeQuery) : url
 
@@ -100,6 +101,11 @@ export default eventHandler(async (event) => {
       const deviceRedirectUrl = getDeviceRedirectUrl(userAgent, link)
       const finalTargetUrl = deviceRedirectUrl ?? targetUrl
 
+      const queryEntries = Object.entries(rawQuery)
+      const queryString = queryEntries.length > 0
+        ? `?${new URLSearchParams(queryEntries as [string, string][]).toString()}`
+        : ''
+
       // Password protection check
       if (link.password) {
         const headerPassword = getHeader(event, 'x-link-password')
@@ -109,12 +115,12 @@ export default eventHandler(async (event) => {
           const submittedPassword = typeof body?.password === 'string' ? body.password : ''
 
           if (!await verifyLinkPassword(submittedPassword, link.password)) {
-            return sendNoStoreHtml(generatePasswordHtml(slug, { hasError: true, locale: getLocale() }))
+            return sendNoStoreHtml(generatePasswordHtml(slug, { hasError: true, locale: getLocale(), queryString }))
           }
 
           // Password correct - show unsafe warning if needed
           if (link.unsafe && body?.confirm !== 'true') {
-            return sendNoStoreHtml(generateUnsafeWarningHtml(slug, finalTargetUrl, { password: submittedPassword, locale: getLocale() }))
+            return sendNoStoreHtml(generateUnsafeWarningHtml(slug, finalTargetUrl, { password: submittedPassword, locale: getLocale(), queryString }))
           }
         }
         else if (headerPassword) {
@@ -127,7 +133,7 @@ export default eventHandler(async (event) => {
           }
         }
         else {
-          return sendNoStoreHtml(generatePasswordHtml(slug, { locale: getLocale() }))
+          return sendNoStoreHtml(generatePasswordHtml(slug, { locale: getLocale(), queryString }))
         }
       }
 
@@ -136,11 +142,11 @@ export default eventHandler(async (event) => {
         if (event.method === 'POST') {
           const body = await readBody(event)
           if (body?.confirm !== 'true') {
-            return sendNoStoreHtml(generateUnsafeWarningHtml(slug, finalTargetUrl, { locale: getLocale() }))
+            return sendNoStoreHtml(generateUnsafeWarningHtml(slug, finalTargetUrl, { locale: getLocale(), queryString }))
           }
         }
         else {
-          return sendNoStoreHtml(generateUnsafeWarningHtml(slug, finalTargetUrl, { locale: getLocale() }))
+          return sendNoStoreHtml(generateUnsafeWarningHtml(slug, finalTargetUrl, { locale: getLocale(), queryString }))
         }
       }
 
@@ -152,9 +158,11 @@ export default eventHandler(async (event) => {
         }
       }
 
-      // Timer countdown check
-      if (link.timer && link.timer > 0) {
-        return sendNoStoreHtml(generateTimerCountdownHtml(finalTargetUrl, link.timer, { locale: getLocale() }))
+      if (isSocialBot(userAgent) && hasOgConfig(link)) {
+        const baseUrl = `${getRequestProtocol(event)}://${getRequestHost(event)}`
+        const html = generateOgHtml(link, targetUrl, baseUrl)
+        setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
+        return html
       }
 
       event.context.link = link
@@ -188,11 +196,9 @@ export default eventHandler(async (event) => {
         return sendRedirect(event, finalTargetUrl, +redirectStatusCode)
       }
 
-      if (isSocialBot(userAgent) && hasOgConfig(link)) {
-        const baseUrl = `${getRequestProtocol(event)}://${getRequestHost(event)}`
-        const html = generateOgHtml(link, targetUrl, baseUrl)
-        setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
-        return html
+      // Timer countdown check (after logging and OG check)
+      if (link.timer && link.timer > 0) {
+        return sendNoStoreHtml(generateTimerCountdownHtml(finalTargetUrl, link.timer, { locale: getLocale() }))
       }
 
       if (link.cloaking) {

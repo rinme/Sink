@@ -59,10 +59,11 @@ export function generateCloakingHtml(link: Link, targetUrl: string, baseUrl: str
 interface PasswordHtmlOptions {
   hasError?: boolean
   locale?: RedirectLocale
+  queryString?: string
 }
 
 export function generatePasswordHtml(slug: string, options: PasswordHtmlOptions = {}): string {
-  const { hasError = false, locale = 'en-US' } = options
+  const { hasError = false, locale = 'en-US', queryString = '' } = options
   const t = REDIRECT_TRANSLATIONS[locale]
   return `<!DOCTYPE html>
 <html lang="${escape(locale)}">
@@ -88,7 +89,7 @@ export function generatePasswordHtml(slug: string, options: PasswordHtmlOptions 
 <body>
     <div class="card">
         <h1>${escape(t.passwordTitle)}</h1>${hasError ? `\n        <p class="error">${escape(t.passwordError)}</p>` : ''}
-        <form method="POST" action="/${escape(slug)}">
+        <form method="POST" action="/${escape(slug)}${escape(queryString)}">
             <label for="password">${escape(t.passwordLabel)}</label>
             <input type="password" id="password" name="password" required autofocus placeholder="${escape(t.passwordPlaceholder)}">
             <button type="submit">${escape(t.continue)}</button>
@@ -101,10 +102,11 @@ export function generatePasswordHtml(slug: string, options: PasswordHtmlOptions 
 interface UnsafeWarningHtmlOptions {
   password?: string
   locale?: RedirectLocale
+  queryString?: string
 }
 
 export function generateUnsafeWarningHtml(slug: string, targetUrl: string, options: UnsafeWarningHtmlOptions = {}): string {
-  const { password, locale = 'en-US' } = options
+  const { password, locale = 'en-US', queryString = '' } = options
   const t = REDIRECT_TRANSLATIONS[locale]
   return `<!DOCTYPE html>
 <html lang="${escape(locale)}">
@@ -140,7 +142,7 @@ export function generateUnsafeWarningHtml(slug: string, targetUrl: string, optio
         <div class="url">${escape(targetUrl)}</div>
         <div class="actions">
             <a href="javascript:history.back()" class="btn btn-back">${escape(t.goBack)}</a>
-            <form method="POST" action="/${escape(slug)}" style="flex:1;display:flex">
+            <form method="POST" action="/${escape(slug)}${escape(queryString)}" style="flex:1;display:flex">
                 <input type="hidden" name="confirm" value="true">${password ? `\n                <input type="hidden" name="password" value="${escape(password)}">` : ''}
                 <button type="submit" class="btn btn-continue" style="width:100%">${escape(t.continue)}</button>
             </form>

@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { generateVerificationToken } from '../server/utils/template'
 import { deleteStoredLinks, fetch, postJson, setLinkStoreD1Mode } from './utils'
 
 type CfRequestInit = RequestInit & { cf?: { country?: string } }
@@ -270,15 +271,7 @@ describe('password protected redirect', { concurrent: false }, () => {
   })
 })
 
-describe('nSFW age gate and timer countdown redirect', { concurrent: false }, () => {
-  async function computeExpectedToken(slug: string, secret: string) {
-    const encoder = new TextEncoder()
-    const data = encoder.encode(`nsfw:${slug}:${secret}`)
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-    const hashArray = Array.from(new Uint8Array(hashBuffer))
-    return hashArray.slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('')
-  }
-
+describe('nsfw age gate and timer countdown redirect', { concurrent: false }, () => {
   it('shows NSFW age gate when unverified, rejects invalid token, and allows access with valid token', async () => {
     const slug = `nsfw-gate-${crypto.randomUUID()}`
     const targetUrl = 'https://example.com/nsfw-content'
@@ -305,7 +298,7 @@ describe('nSFW age gate and timer countdown redirect', { concurrent: false }, ()
     expect(await bogusResponse.text()).toContain('Age Verification Required')
 
     // Request with valid HMAC token redirects successfully
-    const validToken = await computeExpectedToken(slug, import.meta.env.NUXT_SITE_TOKEN)
+    const validToken = await generateVerificationToken(slug, import.meta.env.NUXT_SITE_TOKEN)
     const verifiedResponse = await fetch(`/${slug}?_verified=${validToken}`, { redirect: 'manual' })
     expect(verifiedResponse.status).toBe(301)
     expect(verifiedResponse.headers.get('Location')).toBe(targetUrl)
@@ -354,5 +347,38 @@ describe('nSFW age gate and timer countdown redirect', { concurrent: false }, ()
     // Verified param should be stripped, but foo=bar retained
     expect(html).toContain('foo=bar')
     expect(html).not.toContain('_verified=')
+  })
+
+  it('preserves _verified query parameter across password submission for NSFW + password links', async () => {
+    const slug = `nsfw-pwd-${crypto.randomUUID()}`
+    const password = 'nsfw-password-123'
+    const targetUrl = 'https://example.com/nsfw-password-protected'
+    const createResponse = await postJson('/api/link/create', {
+      url: targetUrl,
+      slug,
+      password,
+      nsfw: true,
+    })
+    expect(createResponse.status).toBe(201)
+    createdSlugs.push(slug)
+
+    const validToken = await generateVerificationToken(slug, import.meta.env.NUXT_SITE_TOKEN)
+
+    // Visiting with _verified token should show password page, with form action preserving ?_verified=...
+    const pwdPageResponse = await fetch(`/${slug}?_verified=${validToken}`, { redirect: 'manual' })
+    expect(pwdPageResponse.status).toBe(200)
+    const pwdHtml = await pwdPageResponse.text()
+    expect(pwdHtml).toContain('Password Required')
+    expect(pwdHtml).toContain(`action="/${slug}?_verified=${validToken}"`)
+
+    // Submitting password to that action preserves _verified, bypassing NSFW age gate and redirecting
+    const submitResponse = await fetch(`/${slug}?_verified=${validToken}`, {
+      method: 'POST',
+      redirect: 'manual',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ password }),
+    })
+    expect(submitResponse.status).toBe(301)
+    expect(submitResponse.headers.get('Location')).toBe(targetUrl)
   })
 })
