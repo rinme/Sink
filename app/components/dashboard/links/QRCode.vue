@@ -186,8 +186,7 @@ onMounted(() => {
         >{{ t('links.qr.transparent_bg') }}</Label>
         <Checkbox
           id="qr-transparent-bg"
-          :checked="transparentBg"
-          @update:checked="(val: boolean) => transparentBg = val"
+          v-model:checked="transparentBg"
         />
       </div>
 

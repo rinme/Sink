@@ -40,3 +40,7 @@ opencode.json
 
 # Local deepwork session state
 .slim/deepwork/
+
+# Superpowers session state and plans
+.superpowers/
+docs/superpowers/
