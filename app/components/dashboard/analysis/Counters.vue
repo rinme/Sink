@@ -73,21 +73,33 @@ watch([() => analysisStore.dateRange, () => analysisStore.filters, retryKey], as
       lg:gap-4
     "
   >
-    <Card size="sm">
+    <Card
+      size="sm" class="
+        transition-all duration-200
+        hover:border-border hover:shadow-xs
+      "
+    >
       <CardHeader
         class="flex flex-row items-center justify-between"
       >
         <CardTitle class="text-sm font-medium">
           <h2>{{ $t('dashboard.visits') }}</h2>
         </CardTitle>
-        <MousePointerClick
-          aria-hidden="true" class="size-4 text-muted-foreground"
-        />
+        <div
+          class="
+            flex size-7 items-center justify-center rounded-md bg-muted/60
+            text-muted-foreground
+          "
+        >
+          <MousePointerClick
+            aria-hidden="true" class="size-3.5"
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <div class="relative min-h-8">
           <NumberFlow
-            class="block text-2xl font-bold tabular-nums"
+            class="block text-2xl font-bold tracking-tight tabular-nums"
             :class="{ 'opacity-0': counters.visits === 0 }"
             :value="counters.visits"
           />
@@ -99,19 +111,31 @@ watch([() => analysisStore.dateRange, () => analysisStore.filters, retryKey], as
         </div>
       </CardContent>
     </Card>
-    <Card size="sm">
+    <Card
+      size="sm" class="
+        transition-all duration-200
+        hover:border-border hover:shadow-xs
+      "
+    >
       <CardHeader
         class="flex flex-row items-center justify-between"
       >
         <CardTitle class="text-sm font-medium">
           <h2>{{ $t('dashboard.visitors') }}</h2>
         </CardTitle>
-        <Users aria-hidden="true" class="size-4 text-muted-foreground" />
+        <div
+          class="
+            flex size-7 items-center justify-center rounded-md bg-muted/60
+            text-muted-foreground
+          "
+        >
+          <Users aria-hidden="true" class="size-3.5" />
+        </div>
       </CardHeader>
       <CardContent>
         <div class="relative min-h-8">
           <NumberFlow
-            class="block text-2xl font-bold tabular-nums"
+            class="block text-2xl font-bold tracking-tight tabular-nums"
             :class="{ 'opacity-0': counters.visitors === 0 }"
             :value="counters.visitors"
           />
@@ -123,19 +147,31 @@ watch([() => analysisStore.dateRange, () => analysisStore.filters, retryKey], as
         </div>
       </CardContent>
     </Card>
-    <Card size="sm">
+    <Card
+      size="sm" class="
+        transition-all duration-200
+        hover:border-border hover:shadow-xs
+      "
+    >
       <CardHeader
         class="flex flex-row items-center justify-between"
       >
         <CardTitle class="text-sm font-medium">
           <h2>{{ $t('dashboard.referers') }}</h2>
         </CardTitle>
-        <Flame aria-hidden="true" class="size-4 text-muted-foreground" />
+        <div
+          class="
+            flex size-7 items-center justify-center rounded-md bg-muted/60
+            text-muted-foreground
+          "
+        >
+          <Flame aria-hidden="true" class="size-3.5" />
+        </div>
       </CardHeader>
       <CardContent>
         <div class="relative min-h-8">
           <NumberFlow
-            class="block text-2xl font-bold tabular-nums"
+            class="block text-2xl font-bold tracking-tight tabular-nums"
             :class="{ 'opacity-0': counters.referers === 0 }"
             :value="counters.referers"
           />

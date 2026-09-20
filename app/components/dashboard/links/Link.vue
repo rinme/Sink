@@ -95,7 +95,12 @@ function copyLink() {
 </script>
 
 <template>
-  <Card size="sm" class="relative isolate h-full min-w-0">
+  <Card
+    size="sm" class="
+      relative isolate h-full min-w-0 transition-all duration-200
+      hover:border-border hover:shadow-md
+    "
+  >
     <CardContent
       class="flex h-full min-w-0 flex-1 flex-col gap-3"
     >

@@ -44,14 +44,14 @@ function closeMobileMenu() {
     <header>
       <div
         class="
-          fixed z-20 w-full border-b bg-background/80
-          pt-[env(safe-area-inset-top)] text-foreground backdrop-blur-3xl
+          fixed z-20 w-full border-b border-border/60 bg-background/80
+          pt-[env(safe-area-inset-top)] text-foreground backdrop-blur-xl
         "
       >
         <div class="mx-auto max-w-6xl px-6">
           <div
             class="
-              flex items-center justify-between gap-6 py-3
+              flex items-center justify-between gap-6 py-3.5
               lg:py-4
             "
           >
@@ -59,18 +59,27 @@ function closeMobileMenu() {
               to="/"
               :title="title"
               :aria-label="$t('layouts.links.home_aria_label')"
-              class="flex items-center space-x-2"
+              class="
+                group flex items-center space-x-2.5 transition-opacity
+                hover:opacity-90
+              "
             >
-              <span class="flex size-8 items-center justify-center rounded-full">
+              <span
+                class="
+                  flex size-8 items-center justify-center rounded-full
+                  transition-transform duration-200
+                  group-hover:scale-105
+                "
+              >
                 <img
                   src="/sink.png"
                   :alt="`${title} Logo`"
                   width="32"
                   height="32"
-                  class="size-full rounded-full"
+                  class="size-full rounded-full shadow-xs"
                 >
               </span>
-              <span class="text-xl font-black">{{ title }}</span>
+              <span class="text-xl font-bold tracking-tight">{{ title }}</span>
             </NuxtLink>
 
             <div
@@ -240,8 +249,8 @@ function closeMobileMenu() {
     <!-- Footer -->
     <footer
       class="
-        border-t bg-background pt-8 pb-[calc(2rem+env(safe-area-inset-bottom))]
-        text-foreground
+        border-t border-border/60 bg-background pt-8
+        pb-[calc(2rem+env(safe-area-inset-bottom))] text-foreground
       "
     >
       <div class="mx-auto max-w-6xl px-6">
@@ -255,21 +264,28 @@ function closeMobileMenu() {
             to="/"
             :title="title"
             :aria-label="$t('layouts.links.home_aria_label')"
-            class="block size-fit"
+            class="
+              group block size-fit transition-opacity
+              hover:opacity-90
+            "
           >
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2.5">
               <span
-                class="flex size-8 items-center justify-center rounded-full"
+                class="
+                  flex size-8 items-center justify-center rounded-full
+                  transition-transform duration-200
+                  group-hover:scale-105
+                "
               >
                 <img
                   src="/sink.png"
                   :alt="`${title} Logo`"
                   width="32"
                   height="32"
-                  class="size-full rounded-full"
+                  class="size-full rounded-full shadow-xs"
                 >
               </span>
-              <span class="text-xl font-black">{{ title }}</span>
+              <span class="text-xl font-bold tracking-tight">{{ title }}</span>
             </div>
           </NuxtLink>
 

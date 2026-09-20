@@ -39,8 +39,9 @@ useSeoMeta({
       <div class="flex h-full flex-col">
         <header
           class="
-            z-20 flex shrink-0 flex-col gap-2 border-b bg-background p-4
-            pt-[calc(1rem+env(safe-area-inset-top))]
+            z-20 flex shrink-0 flex-col gap-2 border-b border-border/60
+            bg-background/85 p-4 pt-[calc(1rem+env(safe-area-inset-top))]
+            backdrop-blur-md
             sm:h-16 sm:flex-row sm:items-center sm:gap-2 sm:py-0
           "
         >

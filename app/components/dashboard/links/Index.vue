@@ -176,15 +176,25 @@ linksStore.onLinkUpdate(({ link, type }) => {
       {{ $t('links.no_more') }}
     </span>
   </div>
-  <Card v-if="!listLoading && listComplete && links.length === 0">
+  <Card
+    v-if="!listLoading && listComplete && links.length === 0" class="
+      border-dashed bg-card/40
+    "
+  >
     <CardContent
       class="
-        flex min-h-48 flex-col items-center justify-center gap-3 text-center
-        text-muted-foreground
+        flex min-h-52 flex-col items-center justify-center gap-3 p-8 text-center
       "
     >
-      <Inbox class="size-8" aria-hidden="true" />
-      <p class="text-sm">
+      <div
+        class="
+          flex size-12 items-center justify-center rounded-2xl bg-muted/80
+          text-muted-foreground
+        "
+      >
+        <Inbox class="size-6" aria-hidden="true" />
+      </div>
+      <p class="text-sm font-medium text-foreground">
         {{ $t('links.no_filtered_results') }}
       </p>
     </CardContent>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GitFork, Star } from '@lucide/vue'
 import NumberFlow from '@number-flow/vue'
 
 const { rawStats } = useGithubStats()
@@ -13,56 +14,94 @@ const { rawStats } = useGithubStats()
   >
     <div
       class="
-        mx-auto max-w-6xl space-y-8 px-6
-        md:space-y-12
+        mx-auto max-w-6xl space-y-10 px-6
+        md:space-y-14
       "
     >
-      <div class="relative z-10 mx-auto max-w-xl space-y-4 text-center">
+      <div class="relative z-10 mx-auto max-w-xl space-y-3 text-center">
         <h2
-          class="text-3xl font-semibold text-balance"
+          class="
+            text-3xl font-bold tracking-tight text-balance
+            sm:text-4xl
+          "
         >
           {{ $t('home.stats.title') }}
         </h2>
-        <p class="text-muted-foreground">
+        <p class="text-base text-muted-foreground">
           {{ $t('home.stats.subtitle') }}
         </p>
       </div>
 
       <div
         class="
-          grid gap-0 divide-y
-          md:grid-cols-2 md:gap-2 md:divide-x md:divide-y-0
+          mx-auto grid max-w-3xl grid-cols-1 gap-6
+          sm:grid-cols-2
         "
       >
         <div
           class="
-            space-y-4 pb-6 text-center
-            md:pb-0
+            group flex flex-col items-center justify-center rounded-2xl border
+            border-border/70 bg-card/40 p-8 text-center backdrop-blur-xs
+            transition-all duration-300
+            hover:border-border hover:bg-card hover:shadow-md
           "
         >
+          <div
+            class="
+              mb-4 flex size-11 items-center justify-center rounded-xl
+              bg-primary/10 text-primary transition-transform duration-300
+              group-hover:scale-110
+            "
+          >
+            <Star class="size-5" aria-hidden="true" />
+          </div>
           <ClientOnly>
             <template #fallback>
-              <Skeleton class="mx-auto h-12 w-24" />
+              <Skeleton class="h-14 w-28" />
             </template>
-            <NumberFlow class="text-5xl font-bold tabular-nums" :value="rawStats.stars" />
+            <NumberFlow
+              class="
+                text-5xl font-bold tracking-tight tabular-nums
+                sm:text-6xl
+              "
+              :value="rawStats.stars"
+            />
           </ClientOnly>
-          <p class="text-muted-foreground">
+          <p class="mt-2 text-sm font-medium text-muted-foreground">
             {{ $t('home.stats.stars') }}
           </p>
         </div>
+
         <div
           class="
-            space-y-4 pt-6 text-center
-            md:pt-0
+            group flex flex-col items-center justify-center rounded-2xl border
+            border-border/70 bg-card/40 p-8 text-center backdrop-blur-xs
+            transition-all duration-300
+            hover:border-border hover:bg-card hover:shadow-md
           "
         >
+          <div
+            class="
+              mb-4 flex size-11 items-center justify-center rounded-xl
+              bg-primary/10 text-primary transition-transform duration-300
+              group-hover:scale-110
+            "
+          >
+            <GitFork class="size-5" aria-hidden="true" />
+          </div>
           <ClientOnly>
             <template #fallback>
-              <Skeleton class="mx-auto h-12 w-24" />
+              <Skeleton class="h-14 w-28" />
             </template>
-            <NumberFlow class="text-5xl font-bold tabular-nums" :value="rawStats.forks" />
+            <NumberFlow
+              class="
+                text-5xl font-bold tracking-tight tabular-nums
+                sm:text-6xl
+              "
+              :value="rawStats.forks"
+            />
           </ClientOnly>
-          <p class="text-muted-foreground">
+          <p class="mt-2 text-sm font-medium text-muted-foreground">
             {{ $t('home.stats.forks') }}
           </p>
         </div>
