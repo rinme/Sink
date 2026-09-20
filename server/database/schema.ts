@@ -20,6 +20,8 @@ export const links = sqliteTable('links', {
   password: text(),
   unsafe: integer({ mode: 'boolean' }),
   geo: text({ mode: 'json' }).$type<Link['geo']>(),
+  timer: integer(),
+  nsfw: integer({ mode: 'boolean' }),
   normalizedUrl: text('normalized_url').notNull(),
   effectiveExpiresAt: integer('effective_expires_at'),
 }, table => [

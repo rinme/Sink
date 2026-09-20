@@ -57,6 +57,8 @@ const LinkFieldsSchema = z.object({
   password: LinkPasswordSchema.optional(),
   unsafe: z.boolean().optional(),
   geo: GeoSchema.optional(),
+  timer: z.number().int().min(1).max(60).optional(),
+  nsfw: z.boolean().optional(),
   tags: TagsSchema,
 })
 

@@ -104,6 +104,8 @@ function rowToLink(row: LinkRow): Link {
     'password',
     'unsafe',
     'geo',
+    'timer',
+    'nsfw',
   ] as const
 
   for (const field of optionalFields) {
@@ -153,6 +155,8 @@ export function buildD1LinkValues(event: H3Event, link: Link, effectiveExpiresAt
     password: link.password ?? null,
     unsafe: link.unsafe ?? null,
     geo: link.geo ?? null,
+    timer: link.timer ?? null,
+    nsfw: link.nsfw ?? null,
     normalizedUrl: withoutQuery(link.url),
     effectiveExpiresAt: effectiveExpiresAt === undefined ? getExpiration(event, link.expiration) ?? null : effectiveExpiresAt,
   }
