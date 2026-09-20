@@ -81,6 +81,12 @@
       "referers": "{count} perujuk"
     },
     "form": {
+      "tabs": {
+        "general": "Umum",
+        "settings": "Pengaturan",
+        "social": "Sosial",
+        "routing": "Perutean"
+      },
       "url": "URL",
       "slug": "Slug",
       "comment": "Catatan",

@@ -81,6 +81,12 @@
       "referers": "{count} referrer"
     },
     "form": {
+      "tabs": {
+        "general": "Generale",
+        "settings": "Impostazioni",
+        "social": "Social",
+        "routing": "Instradamento"
+      },
       "url": "URL",
       "slug": "Slug",
       "comment": "Commento",

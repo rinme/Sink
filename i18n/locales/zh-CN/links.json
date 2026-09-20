@@ -81,6 +81,12 @@
       "referers": "{count} 个来源"
     },
     "form": {
+      "tabs": {
+        "general": "常规",
+        "settings": "设置",
+        "social": "社交",
+        "routing": "路由"
+      },
       "url": "链接地址",
       "slug": "短链",
       "comment": "备注",

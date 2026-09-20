@@ -25,7 +25,7 @@ const pendingLink = shallowRef<DashboardLink | null>(null)
 const discardIntent = shallowRef<'close' | 'navigate' | null>(null)
 let resolveRouteLeave: ((allow: boolean) => void) | null = null
 
-const formRef = ref<{ initializeRandomSlug: () => void } | null>(null)
+const formRef = ref<{ initializeRandomSlug: () => void, resetActiveTab: () => void } | null>(null)
 const modalOpen = computed({
   get: () => open.value,
   set: (value: boolean) => {
@@ -41,9 +41,12 @@ const modalOpen = computed({
 })
 
 watch(open, (isOpen) => {
-  if (isOpen && !isEdit) {
+  if (isOpen) {
     nextTick(() => {
-      formRef.value?.initializeRandomSlug()
+      formRef.value?.resetActiveTab()
+      if (!isEdit) {
+        formRef.value?.initializeRandomSlug()
+      }
     })
   }
 })

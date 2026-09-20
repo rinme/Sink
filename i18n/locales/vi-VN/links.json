@@ -81,6 +81,12 @@
       "referers": "{count} nguồn giới thiệu"
     },
     "form": {
+      "tabs": {
+        "general": "Chung",
+        "settings": "Cài đặt",
+        "social": "Mạng xã hội",
+        "routing": "Định tuyến"
+      },
       "url": "URL",
       "slug": "Slug",
       "comment": "Ghi chú",

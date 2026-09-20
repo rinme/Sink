@@ -81,6 +81,12 @@
       "referers": "유입 경로 {count}개"
     },
     "form": {
+      "tabs": {
+        "general": "일반",
+        "settings": "설정",
+        "social": "소셜",
+        "routing": "라우팅"
+      },
       "url": "URL",
       "slug": "슬러그",
       "comment": "설명",

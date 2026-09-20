@@ -81,6 +81,12 @@
       "referers": "แหล่งที่มา {count} แหล่ง"
     },
     "form": {
+      "tabs": {
+        "general": "ทั่วไป",
+        "settings": "การตั้งค่า",
+        "social": "โซเชียล",
+        "routing": "การกำหนดเส้นทาง"
+      },
       "url": "URL",
       "slug": "สลาก",
       "comment": "ความคิดเห็น",
