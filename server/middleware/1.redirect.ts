@@ -106,6 +106,14 @@ export default eventHandler(async (event) => {
         ? `?${new URLSearchParams(queryEntries as [string, string][]).toString()}`
         : ''
 
+      // NSFW verification check (run before password check for smoother UX)
+      if (link.nsfw) {
+        const expectedToken = await generateVerificationToken(slug, siteToken)
+        if (_verified !== expectedToken) {
+          return sendNoStoreHtml(generateNsfwAgeGateHtml(slug, expectedToken, { locale: getLocale() }))
+        }
+      }
+
       // Password protection check
       if (link.password) {
         const headerPassword = getHeader(event, 'x-link-password')
@@ -150,21 +158,6 @@ export default eventHandler(async (event) => {
         }
       }
 
-      // NSFW verification check
-      if (link.nsfw) {
-        const expectedToken = await generateVerificationToken(slug, siteToken)
-        if (_verified !== expectedToken) {
-          return sendNoStoreHtml(generateNsfwAgeGateHtml(slug, expectedToken, { locale: getLocale() }))
-        }
-      }
-
-      if (isSocialBot(userAgent) && hasOgConfig(link)) {
-        const baseUrl = `${getRequestProtocol(event)}://${getRequestHost(event)}`
-        const html = generateOgHtml(link, targetUrl, baseUrl)
-        setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
-        return html
-      }
-
       event.context.link = link
       let accessLogResult: AccessLogResult | undefined
       try {
@@ -190,15 +183,22 @@ export default eventHandler(async (event) => {
         }
       }
 
+      if (isSocialBot(userAgent) && hasOgConfig(link)) {
+        const baseUrl = `${getRequestProtocol(event)}://${getRequestHost(event)}`
+        const html = generateOgHtml(link, targetUrl, baseUrl)
+        setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
+        return html
+      }
+
+      // Timer countdown check (runs before device redirect so mobile users also get countdown)
+      if (link.timer && link.timer > 0) {
+        return sendNoStoreHtml(generateTimerCountdownHtml(finalTargetUrl, link.timer, { locale: getLocale() }))
+      }
+
       if (deviceRedirectUrl) {
         if (redirectNoStore)
           setHeader(event, 'Cache-Control', 'no-store')
         return sendRedirect(event, finalTargetUrl, +redirectStatusCode)
-      }
-
-      // Timer countdown check (after logging and OG check)
-      if (link.timer && link.timer > 0) {
-        return sendNoStoreHtml(generateTimerCountdownHtml(finalTargetUrl, link.timer, { locale: getLocale() }))
       }
 
       if (link.cloaking) {

@@ -381,4 +381,30 @@ describe('nsfw age gate and timer countdown redirect', { concurrent: false }, ()
     expect(submitResponse.status).toBe(301)
     expect(submitResponse.headers.get('Location')).toBe(targetUrl)
   })
+
+  it('renders timer countdown page for mobile device with device-specific URL when timer is configured', async () => {
+    const slug = `timer-mobile-${crypto.randomUUID()}`
+    const defaultUrl = 'https://example.com/default'
+    const appleUrl = 'https://apps.apple.com/app/sink-test'
+    const createResponse = await postJson('/api/link/create', {
+      url: defaultUrl,
+      slug,
+      apple: appleUrl,
+      timer: 3,
+    })
+    expect(createResponse.status).toBe(201)
+    createdSlugs.push(slug)
+
+    const response = await fetch(`/${slug}`, {
+      redirect: 'manual',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/147 Version/11.1.1 Mobile/15E148 Safari/604.1',
+      },
+    })
+    expect(response.status).toBe(200)
+    const html = await response.text()
+    expect(html).toContain('You will be redirected in')
+    expect(html).toContain('id="timer">3</div>')
+    expect(html).toContain(appleUrl)
+  })
 })
