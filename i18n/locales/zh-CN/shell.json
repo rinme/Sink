@@ -21,7 +21,9 @@
       "resources_aria_label": "资源",
       "skip_to_content": "跳到主要内容",
       "home_aria_label": "首页",
-      "github_aria_label": "GitHub 上的 Sink"
+      "github_aria_label": "GitHub 上的 Sink",
+      "github_fork": "当前 Fork",
+      "github_upstream": "原始仓库"
     }
   },
   "nav": {

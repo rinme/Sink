@@ -21,7 +21,9 @@
       "resources_aria_label": "리소스",
       "skip_to_content": "주요 콘텐츠로 건너뛰기",
       "home_aria_label": "홈",
-      "github_aria_label": "GitHub의 Sink"
+      "github_aria_label": "GitHub의 Sink",
+      "github_fork": "현재 포크",
+      "github_upstream": "원본 저장소"
     }
   },
   "nav": {

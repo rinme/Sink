@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ArrowRight } from '@lucide/vue'
+import { ArrowRight, ChevronDown } from '@lucide/vue'
 import { GitHubIcon, XIcon } from 'vue3-simple-icons'
 import heroUrl from '@/assets/images/hero.svg?url'
 
-const { title, description, github, twitter } = useAppConfig()
+const { title, description, twitter } = useAppConfig()
 </script>
 
 <template>
@@ -106,25 +106,21 @@ const { title, description, github, twitter } = useAppConfig()
                 />
               </NuxtLink>
             </Button>
-            <Button
-              as-child
-              size="lg"
-              variant="ghost"
-              class="
-                transition-colors
-                hover:bg-muted
-              "
-            >
-              <a
-                :href="github"
-                target="_blank"
-                rel="noopener noreferrer"
+            <GithubDropdown align="start">
+              <Button
+                size="lg"
+                variant="ghost"
+                class="
+                  transition-colors
+                  hover:bg-muted
+                "
                 :title="$t('layouts.footer.social.github')"
               >
                 <GitHubIcon aria-hidden="true" />
                 <span class="text-nowrap">{{ $t('home.hero.github_repo') }}</span>
-              </a>
-            </Button>
+                <ChevronDown class="ml-1 size-3.5 opacity-60" aria-hidden="true" />
+              </Button>
+            </GithubDropdown>
           </div>
         </div>
 

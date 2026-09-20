@@ -21,7 +21,9 @@
       "resources_aria_label": "Ressourcen",
       "skip_to_content": "Zum Hauptinhalt springen",
       "home_aria_label": "Startseite",
-      "github_aria_label": "Sink auf GitHub"
+      "github_aria_label": "Sink auf GitHub",
+      "github_fork": "Dieser Fork",
+      "github_upstream": "Original-Repository"
     }
   },
   "nav": {

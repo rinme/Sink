@@ -21,7 +21,9 @@
       "resources_aria_label": "Recursos",
       "skip_to_content": "Ir para o conteúdo principal",
       "home_aria_label": "Início",
-      "github_aria_label": "Sink no GitHub"
+      "github_aria_label": "Sink no GitHub",
+      "github_fork": "Este fork",
+      "github_upstream": "Repositório original"
     }
   },
   "nav": {

@@ -21,7 +21,9 @@
       "resources_aria_label": "Sumber daya",
       "skip_to_content": "Lompat ke konten utama",
       "home_aria_label": "Beranda",
-      "github_aria_label": "Sink di GitHub"
+      "github_aria_label": "Sink di GitHub",
+      "github_fork": "Fork Ini",
+      "github_upstream": "Repositori Asli"
     }
   },
   "nav": {

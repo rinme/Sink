@@ -21,7 +21,9 @@
       "resources_aria_label": "แหล่งข้อมูล",
       "skip_to_content": "ข้ามไปยังเนื้อหา",
       "home_aria_label": "หน้าแรก",
-      "github_aria_label": "Sink บน GitHub"
+      "github_aria_label": "Sink บน GitHub",
+      "github_fork": "ฟอร์กนี้",
+      "github_upstream": "คลังต้นฉบับ"
     }
   },
   "nav": {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ExternalLink, Menu, Star } from '@lucide/vue'
+import { ChevronDown, ExternalLink, Menu, Star } from '@lucide/vue'
 import NumberFlow from '@number-flow/vue'
 import { GitHubIcon, TelegramIcon, XIcon } from 'vue3-simple-icons'
 import {
@@ -117,20 +117,19 @@ function closeMobileMenu() {
                 </NavigationMenuList>
               </NavigationMenu>
 
-              <Button as-child variant="outline">
-                <a
-                  :href="github"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  :title="$t('layouts.footer.social.github')"
-                  :aria-label="$t('layouts.links.github_aria_label')"
+              <GithubDropdown align="end">
+                <Button
+                  variant="outline"
                   class="flex items-center gap-1.5"
+                  :title="$t('layouts.links.github_aria_label')"
+                  :aria-label="$t('layouts.links.github_aria_label')"
                 >
                   <GitHubIcon class="size-4" aria-hidden="true" />
                   <Star class="size-3" aria-hidden="true" />
                   <NumberFlow class="tabular-nums" :value="rawStats.stars" />
-                </a>
-              </Button>
+                  <ChevronDown class="ml-0.5 size-3 opacity-60" aria-hidden="true" />
+                </Button>
+              </GithubDropdown>
               <SwitchLanguage />
               <SwitchTheme />
             </div>
@@ -211,20 +210,19 @@ function closeMobileMenu() {
                   </nav>
 
                   <div class="mt-auto flex flex-col items-stretch gap-4">
-                    <Button as-child variant="outline">
-                      <a
-                        :href="github"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        :title="$t('layouts.footer.social.github')"
+                    <GithubDropdown align="center">
+                      <Button
+                        variant="outline"
+                        class="flex w-full items-center justify-center gap-1.5"
+                        :title="$t('layouts.links.github_aria_label')"
                         :aria-label="$t('layouts.links.github_aria_label')"
-                        class="flex items-center gap-1.5"
                       >
                         <GitHubIcon class="size-4" aria-hidden="true" />
                         <Star class="size-3" aria-hidden="true" />
                         <NumberFlow class="tabular-nums" :value="rawStats.stars" />
-                      </a>
-                    </Button>
+                        <ChevronDown class="ml-0.5 size-3 opacity-60" aria-hidden="true" />
+                      </Button>
+                    </GithubDropdown>
                     <div class="flex items-center justify-center gap-3">
                       <SwitchLanguage />
                       <SwitchTheme />
@@ -325,22 +323,16 @@ function closeMobileMenu() {
                 <TelegramIcon aria-hidden="true" />
               </a>
             </Button>
-            <Button
-              v-if="github"
-              as-child
-              variant="ghost"
-              size="icon"
-            >
-              <a
-                :href="github"
-                target="_blank"
-                rel="noopener noreferrer"
+            <GithubDropdown v-if="github" align="end">
+              <Button
+                variant="ghost"
+                size="icon"
                 :title="$t('layouts.footer.social.github')"
                 :aria-label="$t('layouts.footer.social.github')"
               >
                 <GitHubIcon aria-hidden="true" />
-              </a>
-            </Button>
+              </Button>
+            </GithubDropdown>
           </nav>
         </div>
       </div>

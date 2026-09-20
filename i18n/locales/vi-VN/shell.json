@@ -21,7 +21,9 @@
       "resources_aria_label": "Tài nguyên",
       "skip_to_content": "Chuyển đến nội dung chính",
       "home_aria_label": "Trang chủ",
-      "github_aria_label": "Sink trên GitHub"
+      "github_aria_label": "Sink trên GitHub",
+      "github_fork": "Bản fork này",
+      "github_upstream": "Kho lưu trữ gốc"
     }
   },
   "nav": {
