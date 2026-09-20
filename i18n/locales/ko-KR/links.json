@@ -30,7 +30,37 @@
     "download_qr_code": "QR 코드 다운로드",
     "change_qr_color": "QR 코드 색상 변경",
     "qr": {
-      "text_alternative": "{url}의 QR 코드"
+      "text_alternative": "{url}의 QR 코드",
+      "color": "색상",
+      "dot_style": "점 스타일",
+      "corner_style": "모서리 스타일",
+      "corner_dot": "모서리 점",
+      "logo": "로고",
+      "logo_none": "없음",
+      "logo_website": "웹사이트",
+      "logo_custom": "사용자 지정",
+      "logo_upload": "이미지 업로드",
+      "logo_change": "이미지 변경",
+      "logo_too_large": "이미지는 2MB 이하여야 합니다",
+      "transparent_bg": "투명 배경",
+      "download_format": "다운로드 형식",
+      "dot_styles": {
+        "dots": "원형",
+        "rounded": "둥근형",
+        "square": "사각형",
+        "extra_rounded": "크게 둥근형",
+        "classy": "클래식",
+        "classy_rounded": "클래식 둥근형"
+      },
+      "corner_square_styles": {
+        "square": "사각형",
+        "extra_rounded": "크게 둥근형",
+        "dot": "원형"
+      },
+      "corner_dot_styles": {
+        "square": "사각형",
+        "dot": "원형"
+      }
     },
     "expired": "만료됨",
     "unsafe": "안전하지 않은 링크",

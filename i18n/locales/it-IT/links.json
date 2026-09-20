@@ -30,7 +30,37 @@
     "download_qr_code": "Scarica Codice QR",
     "change_qr_color": "Cambia colore del codice QR",
     "qr": {
-      "text_alternative": "Codice QR per {url}"
+      "text_alternative": "Codice QR per {url}",
+      "color": "Colore",
+      "dot_style": "Punti",
+      "corner_style": "Angoli",
+      "corner_dot": "Punti angolari",
+      "logo": "Logo",
+      "logo_none": "Nessuno",
+      "logo_website": "Sito web",
+      "logo_custom": "Personalizzato",
+      "logo_upload": "Carica immagine",
+      "logo_change": "Cambia immagine",
+      "logo_too_large": "L'immagine deve essere inferiore a 2MB",
+      "transparent_bg": "Trasparente",
+      "download_format": "Formato di download",
+      "dot_styles": {
+        "dots": "Punti",
+        "rounded": "Arrotondato",
+        "square": "Quadrato",
+        "extra_rounded": "Molto arrotondato",
+        "classy": "Elegante",
+        "classy_rounded": "Elegante arrotondato"
+      },
+      "corner_square_styles": {
+        "square": "Quadrato",
+        "extra_rounded": "Molto arrotondato",
+        "dot": "Punto"
+      },
+      "corner_dot_styles": {
+        "square": "Quadrato",
+        "dot": "Punto"
+      }
     },
     "expired": "Scaduto",
     "unsafe": "Link non sicuro",

@@ -30,7 +30,37 @@
     "download_qr_code": "Unduh Kode QR",
     "change_qr_color": "Ubah warna QR",
     "qr": {
-      "text_alternative": "Kode QR untuk {url}"
+      "text_alternative": "Kode QR untuk {url}",
+      "color": "Warna",
+      "dot_style": "Titik",
+      "corner_style": "Sudut",
+      "corner_dot": "Titik Sudut",
+      "logo": "Logo",
+      "logo_none": "Tidak ada",
+      "logo_website": "Situs Web",
+      "logo_custom": "Kustom",
+      "logo_upload": "Unggah gambar",
+      "logo_change": "Ganti gambar",
+      "logo_too_large": "Ukuran gambar harus di bawah 2MB",
+      "transparent_bg": "Tanpa latar",
+      "download_format": "Format unduhan",
+      "dot_styles": {
+        "dots": "Titik",
+        "rounded": "Membulat",
+        "square": "Kotak",
+        "extra_rounded": "Sangat Membulat",
+        "classy": "Klasik",
+        "classy_rounded": "Klasik Membulat"
+      },
+      "corner_square_styles": {
+        "square": "Kotak",
+        "extra_rounded": "Sangat Membulat",
+        "dot": "Titik"
+      },
+      "corner_dot_styles": {
+        "square": "Kotak",
+        "dot": "Titik"
+      }
     },
     "expired": "Kedaluwarsa",
     "unsafe": "Tautan tidak aman",
