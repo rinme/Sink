@@ -66,6 +66,16 @@ const validateUrl = makeZodValidator(urlValidator)
 const validateSlug = makeZodValidator(slugValidator)
 const validateComment = makeZodValidator(commentValidator)
 const validateOptionalUrl = makeZodValidator(optionalUrlValidator)
+const timerValidator = z.preprocess(
+  (val) => {
+    if (val === '' || val === undefined || val === null)
+      return undefined
+    const num = Number(val)
+    return Number.isNaN(num) ? val : num
+  },
+  z.number().int().min(1).max(60).optional(),
+)
+const validateTimer = makeZodValidator(timerValidator)
 
 const utmBuilderOpen = ref(false)
 const advancedSections = ref<string[]>([])
@@ -168,7 +178,7 @@ function getInitialAdvancedSections() {
     sections.push('og')
   if (props.link.google || props.link.apple)
     sections.push('device')
-  if (props.link.expiration || props.link.cloaking || props.link.redirectWithQuery || props.link.password || props.link.unsafe)
+  if (props.link.expiration || props.link.cloaking || props.link.redirectWithQuery || props.link.password || props.link.unsafe || props.link.timer || props.link.nsfw)
     sections.push('link_settings')
   if (props.link.geo && Object.keys(props.link.geo).length)
     sections.push('geo')
@@ -183,9 +193,11 @@ async function submitForm() {
 
   await form.handleSubmit()
 
-  const fieldOrder = ['url', 'slug', 'comment', 'google', 'apple'] as const
+  const fieldOrder = ['url', 'slug', 'comment', 'timer', 'google', 'apple'] as const
   const firstInvalidField = fieldOrder.find(name => Boolean(form.getFieldMeta(name)?.errors.length))
-  if ((firstInvalidField === 'google' || firstInvalidField === 'apple') && !advancedSections.value.includes('device'))
+  if (firstInvalidField === 'timer' && !advancedSections.value.includes('link_settings'))
+    advancedSections.value = [...advancedSections.value, 'link_settings']
+  else if ((firstInvalidField === 'google' || firstInvalidField === 'apple') && !advancedSections.value.includes('device'))
     advancedSections.value = [...advancedSections.value, 'device']
 
   await nextTick()
@@ -365,6 +377,7 @@ defineExpose({ initializeRandomSlug })
         :form="form"
         :id-prefix="formId"
         :validate-optional-url="validateOptionalUrl"
+        :validate-timer="validateTimer"
         :is-invalid="isInvalid"
         :get-aria-invalid="getAriaInvalid"
         :format-errors="formatErrors"

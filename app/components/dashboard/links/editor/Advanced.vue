@@ -18,6 +18,7 @@ const props = defineProps<{
   }
   idPrefix: string
   validateOptionalUrl: (ctx: { value: string }) => string | undefined
+  validateTimer?: (ctx: { value: unknown }) => string | undefined
   isInvalid: (field: AnyFieldApi) => boolean
   getAriaInvalid: (field: AnyFieldApi) => string | undefined
   formatErrors: (errors: unknown[]) => string[]
@@ -114,6 +115,38 @@ async function aiOg() {
               :label="$t('links.form.unsafe_label')"
               :description="$t('links.form.unsafe_description')"
               @update:model-value="field.handleChange"
+            />
+          </props.form.Field>
+
+          <props.form.Field v-slot="{ field }" name="nsfw">
+            <DashboardLinksEditorFieldSwitch
+              :id="`${idPrefix}-${field.name}`"
+              :model-value="field.state.value"
+              :label="$t('links.form.nsfw')"
+              :description="$t('links.form.nsfw_description')"
+              @update:model-value="field.handleChange"
+            />
+          </props.form.Field>
+
+          <props.form.Field
+            v-slot="{ field }"
+            name="timer"
+            :validators="{ onBlur: validateTimer, onSubmit: validateTimer }"
+          >
+            <DashboardLinksEditorFieldInput
+              :field="field"
+              :input-id="`${idPrefix}-${field.name}`"
+              :label="$t('links.form.timer')"
+              :description="$t('links.form.timer_description')"
+              :placeholder="$t('links.form.timer_placeholder')"
+              type="number"
+              inputmode="numeric"
+              min="1"
+              max="60"
+              autocomplete="off"
+              :invalid="isInvalid(field)"
+              :aria-invalid="getAriaInvalid(field)"
+              :errors="formatErrors(field.state.meta.errors)"
             />
           </props.form.Field>
 

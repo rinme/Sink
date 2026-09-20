@@ -19,6 +19,8 @@ export function createLinkFormInitialValues(link: Partial<DashboardLink>): Dashb
     password: link.password ?? '',
     unsafe: link.unsafe ?? false,
     geo: link.geo ? Object.entries(link.geo).map(([country, url]) => ({ country, url })) : [],
+    timer: link?.timer,
+    nsfw: link?.nsfw ?? false,
   }
 }
 
@@ -34,6 +36,13 @@ export function normalizeLinkFormSubmitPayload(value: DashboardLinkFormData, isE
   let password: string | undefined = value.password
   if (isMaskedLinkPassword(password) || (!isEdit && password === ''))
     password = undefined
+
+  let timer: number | undefined
+  if (value.timer !== undefined && value.timer !== null && (value.timer as unknown) !== '') {
+    const parsedTimer = Number(value.timer)
+    if (!Number.isNaN(parsedTimer) && parsedTimer > 0)
+      timer = parsedTimer
+  }
 
   return {
     url: value.url,
@@ -51,5 +60,7 @@ export function normalizeLinkFormSubmitPayload(value: DashboardLinkFormData, isE
     password,
     unsafe: isEdit ? value.unsafe : value.unsafe || undefined,
     geo: Object.keys(geo).length > 0 ? geo : undefined,
+    timer,
+    nsfw: isEdit ? value.nsfw : value.nsfw || undefined,
   }
 }

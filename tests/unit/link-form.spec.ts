@@ -26,15 +26,19 @@ describe('link form values', () => {
       password: '',
       unsafe: false,
       geo: [],
+      timer: undefined,
+      nsfw: false,
     })
   })
 
-  it('maps stored expiration and geo records into editable values', () => {
+  it('maps stored expiration, geo records, timer, and nsfw into editable values', () => {
     const expiration = Math.floor(new Date(2030, 0, 2, 12).getTime() / 1000)
 
     const values = createLinkFormInitialValues({
       expiration,
       geo: { us: ' https://us.example.com ', CA: 'https://ca.example.com' },
+      timer: 5,
+      nsfw: true,
     })
 
     expect(values.expiration?.toString()).toBe('2030-01-02')
@@ -42,6 +46,8 @@ describe('link form values', () => {
       { country: 'us', url: ' https://us.example.com ' },
       { country: 'CA', url: 'https://ca.example.com' },
     ])
+    expect(values.timer).toBe(5)
+    expect(values.nsfw).toBe(true)
   })
 })
 
@@ -121,5 +127,23 @@ describe('link form submit payload', () => {
     })
     expect(normalizeLinkFormSubmitPayload(formValues({ unsafe: false }), true).unsafe).toBe(false)
     expect(normalizeLinkFormSubmitPayload(formValues(), false).expiration).toBeUndefined()
+  })
+
+  it('normalizes timer and nsfw submission semantics', () => {
+    expect(normalizeLinkFormSubmitPayload(formValues({ timer: 5, nsfw: true }), false)).toMatchObject({
+      timer: 5,
+      nsfw: true,
+    })
+    expect(normalizeLinkFormSubmitPayload(formValues({ timer: undefined, nsfw: false }), false)).toMatchObject({
+      timer: undefined,
+      nsfw: undefined,
+    })
+    expect(normalizeLinkFormSubmitPayload(formValues({ timer: undefined, nsfw: false }), true)).toMatchObject({
+      timer: undefined,
+      nsfw: false,
+    })
+    expect(normalizeLinkFormSubmitPayload(formValues({ timer: '10' as unknown as number }), false)).toMatchObject({
+      timer: 10,
+    })
   })
 })

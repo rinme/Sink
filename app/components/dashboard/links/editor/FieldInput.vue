@@ -5,6 +5,7 @@ defineProps<{
   field: AnyFieldApi
   inputId: string
   label: string
+  description?: string
   type?: string
   inputmode?: string
   placeholder?: string
@@ -13,6 +14,9 @@ defineProps<{
   invalid?: boolean
   ariaInvalid?: string
   errors?: string[]
+  min?: number | string
+  max?: number | string
+  step?: number | string
 }>()
 </script>
 
@@ -21,6 +25,9 @@ defineProps<{
     <FieldLabel :for="inputId">
       {{ label }}
     </FieldLabel>
+    <FieldDescription v-if="description">
+      {{ description }}
+    </FieldDescription>
     <Input
       :id="inputId"
       :name="field.name"
@@ -31,8 +38,11 @@ defineProps<{
       :aria-invalid="ariaInvalid"
       :placeholder="placeholder"
       :autocomplete="autocomplete"
+      :min="min"
+      :max="max"
+      :step="step"
       @blur="field.handleBlur"
-      @input="field.handleChange(($event.target as HTMLInputElement).value)"
+      @input="field.handleChange(type === 'number' ? (($event.target as HTMLInputElement).value === '' ? undefined : Number(($event.target as HTMLInputElement).value)) : ($event.target as HTMLInputElement).value)"
     />
     <FieldError
       v-if="invalid"

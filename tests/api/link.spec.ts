@@ -384,21 +384,27 @@ describe('/api/link/edit', { concurrent: false }, () => {
       title: 'test title',
       cloaking: true,
       redirectWithQuery: true,
+      timer: 5,
+      nsfw: true,
     })
     expect(setResponse.status).toBe(201)
-    const setData = await setResponse.json() as { link: { comment?: string, title?: string, cloaking?: boolean, redirectWithQuery?: boolean } }
+    const setData = await setResponse.json() as { link: { comment?: string, title?: string, cloaking?: boolean, redirectWithQuery?: boolean, timer?: number, nsfw?: boolean } }
     expect(setData.link.comment).toBe('test comment')
     expect(setData.link.title).toBe('test title')
     expect(setData.link.cloaking).toBe(true)
     expect(setData.link.redirectWithQuery).toBe(true)
+    expect(setData.link.timer).toBe(5)
+    expect(setData.link.nsfw).toBe(true)
 
     const removeResponse = await putJson('/api/link/edit', payload)
     expect(removeResponse.status).toBe(201)
-    const removeData = await removeResponse.json() as { link: { comment?: string, title?: string, cloaking?: boolean, redirectWithQuery?: boolean } }
+    const removeData = await removeResponse.json() as { link: { comment?: string, title?: string, cloaking?: boolean, redirectWithQuery?: boolean, timer?: number, nsfw?: boolean } }
     expect(removeData.link.comment).toBeUndefined()
     expect(removeData.link.title).toBeUndefined()
     expect(removeData.link.cloaking).toBeUndefined()
     expect(removeData.link.redirectWithQuery).toBeUndefined()
+    expect(removeData.link.timer).toBeUndefined()
+    expect(removeData.link.nsfw).toBeUndefined()
   })
 
   it('removes geo when not provided in edit', async () => {
