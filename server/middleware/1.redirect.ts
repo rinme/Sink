@@ -50,7 +50,7 @@ function hasOgConfig(link: Link): boolean {
 export default eventHandler(async (event) => {
   const { pathname: slug } = parsePath(event.path.replace(/^\/|\/$/g, ''))
   const { slugRegex, reserveSlug } = useAppConfig()
-  const { homeURL, linkCacheTtl, caseSensitive, redirectWithQuery, redirectStatusCode, redirectNoStore } = useRuntimeConfig(event)
+  const { homeURL, linkCacheTtl, caseSensitive, redirectWithQuery, redirectStatusCode, redirectNoStore, siteToken } = useRuntimeConfig(event)
   const { cloudflare } = event.context
 
   if (event.path === '/' && homeURL)
@@ -85,9 +85,10 @@ export default eventHandler(async (event) => {
         return html
       }
       const userAgent = getHeader(event, 'user-agent') || ''
-      const query = getQuery(event)
+      const rawQuery = getQuery(event)
+      const { _verified, ...safeQuery } = rawQuery as Record<string, unknown>
       const shouldRedirectWithQuery = link.redirectWithQuery ?? redirectWithQuery
-      const buildTarget = (url: string) => shouldRedirectWithQuery ? withQuery(url, query) : url
+      const buildTarget = (url: string) => shouldRedirectWithQuery ? withQuery(url, safeQuery) : url
 
       let targetUrl = link.url
       const country = event.context.cloudflare?.request?.cf?.country
@@ -141,6 +142,19 @@ export default eventHandler(async (event) => {
         else {
           return sendNoStoreHtml(generateUnsafeWarningHtml(slug, finalTargetUrl, { locale: getLocale() }))
         }
+      }
+
+      // NSFW verification check
+      if (link.nsfw) {
+        const expectedToken = await generateVerificationToken(slug, siteToken)
+        if (_verified !== expectedToken) {
+          return sendNoStoreHtml(generateNsfwAgeGateHtml(slug, expectedToken, { locale: getLocale() }))
+        }
+      }
+
+      // Timer countdown check
+      if (link.timer && link.timer > 0) {
+        return sendNoStoreHtml(generateTimerCountdownHtml(finalTargetUrl, link.timer, { locale: getLocale() }))
       }
 
       event.context.link = link

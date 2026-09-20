@@ -269,3 +269,90 @@ describe('password protected redirect', { concurrent: false }, () => {
     expect(confirmedResponse.headers.get('Location')).toBe(targetUrl)
   })
 })
+
+describe('nSFW age gate and timer countdown redirect', { concurrent: false }, () => {
+  async function computeExpectedToken(slug: string, secret: string) {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(`nsfw:${slug}:${secret}`)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('')
+  }
+
+  it('shows NSFW age gate when unverified, rejects invalid token, and allows access with valid token', async () => {
+    const slug = `nsfw-gate-${crypto.randomUUID()}`
+    const targetUrl = 'https://example.com/nsfw-content'
+    const createResponse = await postJson('/api/link/create', {
+      url: targetUrl,
+      slug,
+      nsfw: true,
+    })
+    expect(createResponse.status).toBe(201)
+    createdSlugs.push(slug)
+
+    // Unverified request shows age gate HTML
+    const unverifiedResponse = await fetch(`/${slug}`, { redirect: 'manual' })
+    expect(unverifiedResponse.status).toBe(200)
+    expect(unverifiedResponse.headers.get('Content-Type')).toContain('text/html')
+    const unverifiedHtml = await unverifiedResponse.text()
+    expect(unverifiedHtml).toContain('Age Verification Required')
+    expect(unverifiedHtml).toContain('id="age-form"')
+    expect(unverifiedHtml).toContain('id="birth-year"')
+
+    // Request with bogus token still shows age gate
+    const bogusResponse = await fetch(`/${slug}?_verified=invalidtoken`, { redirect: 'manual' })
+    expect(bogusResponse.status).toBe(200)
+    expect(await bogusResponse.text()).toContain('Age Verification Required')
+
+    // Request with valid HMAC token redirects successfully
+    const validToken = await computeExpectedToken(slug, import.meta.env.NUXT_SITE_TOKEN)
+    const verifiedResponse = await fetch(`/${slug}?_verified=${validToken}`, { redirect: 'manual' })
+    expect(verifiedResponse.status).toBe(301)
+    expect(verifiedResponse.headers.get('Location')).toBe(targetUrl)
+  })
+
+  it('renders localized Thai NSFW age gate when accept-language is th-TH', async () => {
+    const slug = `nsfw-th-${crypto.randomUUID()}`
+    const targetUrl = 'https://example.com/nsfw-th'
+    const createResponse = await postJson('/api/link/create', {
+      url: targetUrl,
+      slug,
+      nsfw: true,
+    })
+    expect(createResponse.status).toBe(201)
+    createdSlugs.push(slug)
+
+    const response = await fetch(`/${slug}`, {
+      redirect: 'manual',
+      headers: { 'Accept-Language': 'th-TH,th;q=0.9' },
+    })
+    expect(response.status).toBe(200)
+    const html = await response.text()
+    expect(html).toContain('ต้องยืนยันอายุ')
+    expect(html).toContain('กรอกปีเกิดของคุณ (ค.ศ.)')
+  })
+
+  it('renders timer countdown HTML with meta refresh fallback and strips _verified from destination URL', async () => {
+    const slug = `timer-redirect-${crypto.randomUUID()}`
+    const targetUrl = 'https://example.com/timer-destination'
+    const createResponse = await postJson('/api/link/create', {
+      url: targetUrl,
+      slug,
+      timer: 5,
+      redirectWithQuery: true,
+    })
+    expect(createResponse.status).toBe(201)
+    createdSlugs.push(slug)
+
+    const response = await fetch(`/${slug}?foo=bar&_verified=sometoken`, { redirect: 'manual' })
+    expect(response.status).toBe(200)
+    expect(response.headers.get('Content-Type')).toContain('text/html')
+    const html = await response.text()
+    expect(html).toContain('You will be redirected in')
+    expect(html).toContain('id="timer">5</div>')
+    expect(html).toContain('<meta http-equiv="refresh"')
+    // Verified param should be stripped, but foo=bar retained
+    expect(html).toContain('foo=bar')
+    expect(html).not.toContain('_verified=')
+  })
+})

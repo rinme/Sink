@@ -10,6 +10,14 @@ interface RedirectTranslation {
   unsafeTitle: string
   unsafeDesc: string
   goBack: string
+  nsfwTitle: string
+  nsfwDesc: string
+  nsfwBirthYearLabel: string
+  nsfwBirthYearPlaceholder: string
+  nsfwVerifyButton: string
+  nsfwUnderageError: string
+  timerRedirecting: string
+  timerSeconds: string
 }
 
 const REDIRECT_LOCALES = [
@@ -20,6 +28,7 @@ const REDIRECT_LOCALES = [
   'it-IT',
   'pt-BR',
   'pt-PT',
+  'th-TH',
   'vi-VN',
   'zh-CN',
   'zh-TW',
@@ -40,6 +49,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Potenziell unsicherer Link',
     unsafeDesc: 'Dieser Link wurde als potenziell unsicher markiert. Gehen Sie mit Vorsicht vor.',
     goBack: 'Zurück',
+    nsfwTitle: 'Altersverifizierung erforderlich',
+    nsfwDesc: 'Dieser Link wurde als nicht jugendfrei (NSFW) eingestuft. Sie müssen mindestens 18 Jahre alt sein, um fortzufahren.',
+    nsfwBirthYearLabel: 'Geben Sie Ihr Geburtsjahr ein',
+    nsfwBirthYearPlaceholder: 'z.B. 1990',
+    nsfwVerifyButton: 'Alter bestätigen',
+    nsfwUnderageError: 'Sie müssen mindestens 18 Jahre alt sein, um auf diesen Inhalt zuzugreifen.',
+    timerRedirecting: 'Sie werden weitergeleitet in',
+    timerSeconds: 'Sekunden',
   },
   'en-US': {
     passwordTitle: 'Password Required',
@@ -50,6 +67,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Potentially Unsafe Link',
     unsafeDesc: 'This link has been flagged as potentially unsafe. Proceed with caution.',
     goBack: 'Go Back',
+    nsfwTitle: 'Age Verification Required',
+    nsfwDesc: 'This link has been marked as NSFW. You must be at least 18 years old to proceed.',
+    nsfwBirthYearLabel: 'Enter your birth year',
+    nsfwBirthYearPlaceholder: 'e.g. 1990',
+    nsfwVerifyButton: 'Verify Age',
+    nsfwUnderageError: 'You must be at least 18 years old to access this content.',
+    timerRedirecting: 'You will be redirected in',
+    timerSeconds: 'seconds',
   },
   'fr-FR': {
     passwordTitle: 'Mot de passe requis',
@@ -60,6 +85,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Lien potentiellement dangereux',
     unsafeDesc: 'Ce lien a été signalé comme potentiellement dangereux. Procédez avec prudence.',
     goBack: 'Retour',
+    nsfwTitle: 'Vérification de l\'âge requise',
+    nsfwDesc: 'Ce lien a été marqué comme NSFW. Vous devez avoir au moins 18 ans pour continuer.',
+    nsfwBirthYearLabel: 'Entrez votre année de naissance',
+    nsfwBirthYearPlaceholder: 'ex. 1990',
+    nsfwVerifyButton: 'Vérifier l\'âge',
+    nsfwUnderageError: 'Vous devez avoir au moins 18 ans pour accéder à ce contenu.',
+    timerRedirecting: 'Vous serez redirigé dans',
+    timerSeconds: 'secondes',
   },
   'id-ID': {
     passwordTitle: 'Diperlukan Kata Sandi',
@@ -70,6 +103,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Tautan Berpotensi Tidak Aman',
     unsafeDesc: 'Tautan ini telah ditandai berpotensi tidak aman. Lanjutkan dengan hati-hati.',
     goBack: 'Kembali',
+    nsfwTitle: 'Verifikasi Usia Diperlukan',
+    nsfwDesc: 'Tautan ini telah ditandai sebagai NSFW. Anda harus berusia minimal 18 tahun untuk melanjutkan.',
+    nsfwBirthYearLabel: 'Masukkan tahun kelahiran Anda',
+    nsfwBirthYearPlaceholder: 'contoh: 1990',
+    nsfwVerifyButton: 'Verifikasi Usia',
+    nsfwUnderageError: 'Anda harus berusia minimal 18 tahun untuk mengakses konten ini.',
+    timerRedirecting: 'Anda akan dialihkan dalam',
+    timerSeconds: 'detik',
   },
   'it-IT': {
     passwordTitle: 'Password richiesta',
@@ -80,6 +121,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Link potenzialmente non sicuro',
     unsafeDesc: 'Questo link è stato contrassegnato come potenzialmente non sicuro. Procedi con cautela.',
     goBack: 'Indietro',
+    nsfwTitle: 'Verifica dell\'età richiesta',
+    nsfwDesc: 'Questo link è stato contrassegnato come NSFW. Devi avere almeno 18 anni per procedere.',
+    nsfwBirthYearLabel: 'Inserisci il tuo anno di nascita',
+    nsfwBirthYearPlaceholder: 'es. 1990',
+    nsfwVerifyButton: 'Verifica età',
+    nsfwUnderageError: 'Devi avere almeno 18 anni per accedere a questo contenuto.',
+    timerRedirecting: 'Verrai reindirizzato tra',
+    timerSeconds: 'secondi',
   },
   'pt-BR': {
     passwordTitle: 'Senha necessária',
@@ -90,6 +139,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Link potencialmente inseguro',
     unsafeDesc: 'Este link foi sinalizado como potencialmente inseguro. Prossiga com cuidado.',
     goBack: 'Voltar',
+    nsfwTitle: 'Verificação de idade necessária',
+    nsfwDesc: 'Este link foi marcado como NSFW. Você deve ter pelo menos 18 anos para prosseguir.',
+    nsfwBirthYearLabel: 'Digite seu ano de nascimento',
+    nsfwBirthYearPlaceholder: 'ex. 1990',
+    nsfwVerifyButton: 'Verificar idade',
+    nsfwUnderageError: 'Você deve ter pelo menos 18 anos para acessar este conteúdo.',
+    timerRedirecting: 'Você será redirecionado em',
+    timerSeconds: 'segundos',
   },
   'pt-PT': {
     passwordTitle: 'Palavra-passe necessária',
@@ -100,6 +157,32 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Ligação potencialmente insegura',
     unsafeDesc: 'Esta ligação foi assinalada como potencialmente insegura. Prossiga com cuidado.',
     goBack: 'Voltar',
+    nsfwTitle: 'Verificação de idade necessária',
+    nsfwDesc: 'Esta ligação foi marcada como NSFW. Tem de ter pelo menos 18 anos para prosseguir.',
+    nsfwBirthYearLabel: 'Introduza o seu ano de nascimento',
+    nsfwBirthYearPlaceholder: 'ex. 1990',
+    nsfwVerifyButton: 'Verificar idade',
+    nsfwUnderageError: 'Tem de ter pelo menos 18 anos para aceder a este conteúdo.',
+    timerRedirecting: 'Será redirecionado em',
+    timerSeconds: 'segundos',
+  },
+  'th-TH': {
+    passwordTitle: 'ต้องใช้รหัสผ่าน',
+    passwordLabel: 'รหัสผ่าน',
+    passwordPlaceholder: 'กรอกรหัสผ่าน',
+    passwordError: 'รหัสผ่านไม่ถูกต้อง',
+    continue: 'ดำเนินการต่อ',
+    unsafeTitle: 'ลิงก์ที่อาจไม่ปลอดภัย',
+    unsafeDesc: 'ลิงก์นี้ถูกทำเครื่องหมายว่าอาจไม่ปลอดภัย โปรดดำเนินการด้วยความระมัดระวัง',
+    goBack: 'ย้อนกลับ',
+    nsfwTitle: 'ต้องยืนยันอายุ',
+    nsfwDesc: 'ลิงก์นี้ถูกทำเครื่องหมายเป็น NSFW คุณต้องมีอายุอย่างน้อย 18 ปีจึงจะสามารถดำเนินการต่อได้',
+    nsfwBirthYearLabel: 'กรอกปีเกิดของคุณ (ค.ศ.)',
+    nsfwBirthYearPlaceholder: 'เช่น 1990',
+    nsfwVerifyButton: 'ยืนยันอายุ',
+    nsfwUnderageError: 'คุณต้องมีอายุอย่างน้อย 18 ปีจึงจะเข้าถึงเนื้อหานี้ได้',
+    timerRedirecting: 'คุณจะถูกเปลี่ยนเส้นทางในอีก',
+    timerSeconds: 'วินาที',
   },
   'vi-VN': {
     passwordTitle: 'Yêu cầu mật khẩu',
@@ -110,6 +193,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: 'Liên kết có thể không an toàn',
     unsafeDesc: 'Liên kết này đã bị đánh dấu là có thể không an toàn. Hãy thận trọng khi tiếp tục.',
     goBack: 'Quay lại',
+    nsfwTitle: 'Yêu cầu xác minh độ tuổi',
+    nsfwDesc: 'Liên kết này được đánh dấu là NSFW. Bạn phải đủ 18 tuổi trở lên để tiếp tục.',
+    nsfwBirthYearLabel: 'Nhập năm sinh của bạn',
+    nsfwBirthYearPlaceholder: 'ví dụ 1990',
+    nsfwVerifyButton: 'Xác minh độ tuổi',
+    nsfwUnderageError: 'Bạn phải đủ 18 tuổi trở lên để truy cập nội dung này.',
+    timerRedirecting: 'Bạn sẽ được chuyển hướng sau',
+    timerSeconds: 'giây',
   },
   'zh-CN': {
     passwordTitle: '需要密码',
@@ -120,6 +211,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: '潜在不安全链接',
     unsafeDesc: '此链接已被标记为潜在不安全。请谨慎访问。',
     goBack: '返回',
+    nsfwTitle: '需要年龄验证',
+    nsfwDesc: '此链接已被标记为 NSFW 内容。您必须年满 18 周岁方可继续访问。',
+    nsfwBirthYearLabel: '请输入出生年份',
+    nsfwBirthYearPlaceholder: '例如 1990',
+    nsfwVerifyButton: '验证年龄',
+    nsfwUnderageError: '您必须年满 18 周岁才能访问此内容。',
+    timerRedirecting: '您将在',
+    timerSeconds: '秒后被重定向',
   },
   'zh-TW': {
     passwordTitle: '需要密碼',
@@ -130,6 +229,14 @@ export const REDIRECT_TRANSLATIONS = {
     unsafeTitle: '潛在不安全連結',
     unsafeDesc: '此連結已被標記為潛在不安全。請謹慎訪問。',
     goBack: '返回',
+    nsfwTitle: '需要年齡驗證',
+    nsfwDesc: '此連結已被標記為 NSFW 內容。您必須年滿 18 歲方可繼續訪問。',
+    nsfwBirthYearLabel: '請輸入出生年份',
+    nsfwBirthYearPlaceholder: '例如 1990',
+    nsfwVerifyButton: '驗證年齡',
+    nsfwUnderageError: '您必須年滿 18 歲才能訪問此內容。',
+    timerRedirecting: '您將在',
+    timerSeconds: '秒後被重定向',
   },
 } as const satisfies Record<RedirectLocale, RedirectTranslation>
 
@@ -142,6 +249,7 @@ const LOCALE_ALIASES: Record<string, RedirectLocale> = {
   'id': 'id-ID',
   'it': 'it-IT',
   'pt': 'pt-BR',
+  'th': 'th-TH',
   'vi': 'vi-VN',
   'zh': 'zh-CN',
   'zh-Hans': 'zh-CN',
