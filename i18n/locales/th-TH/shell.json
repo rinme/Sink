@@ -1,0 +1,46 @@
+{
+  "layouts": {
+    "footer": {
+      "social": {
+        "email": "อีเมล",
+        "telegram": "เทเลแกรม",
+        "blog": "บล็อก",
+        "twitter": "ทวิตเตอร์",
+        "mastodon": "มาสโตดอน",
+        "github": "กิตฮับ"
+      }
+    },
+    "header": {
+      "select_language": "เลือกภาษา",
+      "toggle_menu_aria_label": "สลับเมนู"
+    },
+    "links": {
+      "documentation": "เอกสารประกอบ",
+      "api_reference": "เอกสารอ้างอิง API",
+      "documentation_aria_label": "เปิดเอกสารประกอบ Sink (เปิดในแท็บใหม่)",
+      "resources_aria_label": "แหล่งข้อมูล",
+      "skip_to_content": "ข้ามไปยังเนื้อหา",
+      "home_aria_label": "หน้าแรก",
+      "github_aria_label": "Sink บน GitHub"
+    }
+  },
+  "nav": {
+    "links": "ลิงก์",
+    "analysis": "การวิเคราะห์",
+    "realtime": "เรียลไทม์",
+    "check": "ตรวจสอบ",
+    "migrate": "นำเข้า/ส่งออก"
+  },
+  "sidebar": {
+    "subtitle": "ตัวย่อ URL",
+    "platform": "แพลตฟอร์ม",
+    "settings": "การตั้งค่า",
+    "import": "นำเข้า",
+    "export": "ส่งออก",
+    "coffee": "เลี้ยงกาแฟฉัน",
+    "github": "กิตฮับ",
+    "releases": "เวอร์ชันเผยแพร่",
+    "stars": "ดาว",
+    "update": "มีเวอร์ชันใหม่ {version} (ปัจจุบัน: {current})"
+  }
+}

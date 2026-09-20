@@ -1,0 +1,22 @@
+{
+  "common": {
+    "i18n": "หลายภาษา",
+    "abbreviations": "Th",
+    "current_language": "ภาษาไทย",
+    "try_again": "ลองอีกครั้ง",
+    "cancel": "ยกเลิก",
+    "continue": "ดำเนินการต่อ",
+    "close": "ปิด",
+    "save": "บันทึก",
+    "edit": "แก้ไข",
+    "delete": "ลบ",
+    "delete_success": "ลบสำเร็จ!",
+    "search": "ค้นหา"
+  },
+  "theme": {
+    "toggle": "สลับธีม",
+    "light": "สว่าง",
+    "dark": "มืด",
+    "system": "ระบบ"
+  }
+}

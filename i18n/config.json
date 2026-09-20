@@ -64,6 +64,11 @@
       "code": "pt-BR",
       "name": "Português (BR)",
       "emoji": "🇧🇷"
+    },
+    {
+      "code": "th-TH",
+      "name": "ไทย",
+      "emoji": "🇹🇭"
     }
   ]
 }
