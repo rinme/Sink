@@ -20,14 +20,6 @@ const { t } = useI18n()
 const { isMobile, setOpenMobile } = useSidebar()
 const route = useRoute()
 
-let globePreloaded = false
-function preloadGlobeOnHover(url: string) {
-  if (url.includes('realtime') && !globePreloaded) {
-    globePreloaded = true
-    import('@/components/dashboard/realtime/Globe.vue')
-  }
-}
-
 watch(() => route.path, () => {
   if (isMobile.value) {
     setOpenMobile(false)
@@ -43,11 +35,14 @@ watch(() => route.path, () => {
         <SidebarMenuButton
           as-child
           :tooltip="t(item.title)"
-          :data-active="item.isActive"
-          @mouseenter="preloadGlobeOnHover(item.url)"
+          :is-active="item.isActive"
+          class="
+            hover:rounded-4xl
+            data-active:rounded-4xl
+          "
         >
           <NuxtLink :to="item.url">
-            <component :is="item.icon" />
+            <component :is="item.icon" aria-hidden="true" />
             <span>{{ t(item.title) }}</span>
           </NuxtLink>
         </SidebarMenuButton>
@@ -62,10 +57,14 @@ watch(() => route.path, () => {
         <SidebarMenuButton
           as-child
           :tooltip="t(item.title)"
-          :data-active="item.isActive"
+          :is-active="item.isActive"
+          class="
+            hover:rounded-4xl
+            data-active:rounded-4xl
+          "
         >
           <NuxtLink :to="item.url">
-            <component :is="item.icon" />
+            <component :is="item.icon" aria-hidden="true" />
             <span>{{ t(item.title) }}</span>
           </NuxtLink>
         </SidebarMenuButton>

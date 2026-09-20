@@ -1,112 +1,117 @@
 <script setup lang="ts">
-import { ChevronsUpDown, LogOut } from 'lucide-vue-next'
+import { ChevronsUpDown, LogOut } from '@lucide/vue'
 import { useSidebar } from '@/components/ui/sidebar'
 
 interface User {
   name: string
   email: string
-  avatar: string
 }
 
 const { isMobile } = useSidebar()
+const { userEmail } = useAuthSession()
+const menuButton = useTemplateRef<{ $el: HTMLElement }>('menuButton')
+const menuOpen = shallowRef(false)
+const logoutOpen = shallowRef(false)
+const avatarURL = shallowRef('')
 
-const hostname = computed<string>(() => {
-  if (import.meta.client) {
-    return window.location.hostname
-  }
-  return 'localhost'
-})
+async function openLogoutDialog() {
+  menuOpen.value = false
+  await nextTick()
+  logoutOpen.value = true
+}
+
+function restoreMenuFocus(event: Event) {
+  event.preventDefault()
+  menuButton.value?.$el.focus()
+}
 
 const user = computed<User>(() => ({
-  name: 'Root',
-  email: `root@${hostname.value}`,
-  avatar: '/sink.png',
+  name: userEmail.value?.split('@')[0] || '',
+  email: userEmail.value || '',
 }))
+const avatarFallback = computed(() => user.value.name.charAt(0).toUpperCase() || 'R')
 
-function logOut() {
-  localStorage.removeItem('SinkSiteToken')
-  navigateTo('/dashboard/login')
-}
+watch(userEmail, async (email, _previousEmail, onCleanup) => {
+  avatarURL.value = ''
+  if (!email)
+    return
+
+  let cancelled = false
+  onCleanup(() => {
+    cancelled = true
+  })
+
+  const bytes = new TextEncoder().encode(email.trim().toLowerCase())
+  const digest = await crypto.subtle.digest('SHA-256', bytes)
+  if (!cancelled) {
+    const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('')
+    avatarURL.value = `https://gravatar.webp.se/avatar/${hash}?d=404`
+  }
+}, { immediate: true })
 </script>
 
 <template>
   <SidebarMenu>
     <SidebarMenuItem>
-      <DropdownMenu>
+      <DropdownMenu v-model:open="menuOpen">
         <DropdownMenuTrigger as-child>
           <SidebarMenuButton
+            ref="menuButton"
             size="lg"
+            :aria-label="user.name"
             class="
               data-[state=open]:bg-sidebar-accent
               data-[state=open]:text-sidebar-accent-foreground
             "
           >
-            <Avatar class="h-8 w-8 rounded-full">
-              <AvatarImage :src="user.avatar" :alt="user.name" />
+            <Avatar class="size-8 rounded-full">
+              <AvatarImage v-if="avatarURL" :src="avatarURL" alt="" />
               <AvatarFallback class="rounded-full">
-                R
+                {{ avatarFallback }}
               </AvatarFallback>
             </Avatar>
-            <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ user.name }}</span>
+            <div class="grid min-w-0 flex-1 text-left text-sm/tight">
+              <span class="truncate font-medium capitalize">{{ user.name }}</span>
               <span class="truncate text-xs">{{ user.email }}</span>
             </div>
-            <ChevronsUpDown class="ml-auto size-4" />
+            <ChevronsUpDown aria-hidden="true" class="ml-auto size-4" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+          class="w-[--reka-dropdown-menu-trigger-width] min-w-56"
           :side="isMobile ? 'bottom' : 'right'"
           align="end"
           :side-offset="4"
         >
-          <DropdownMenuLabel class="p-0 font-normal">
+          <DropdownMenuLabel class="p-0">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar class="h-8 w-8 rounded-full">
-                <AvatarImage :src="user.avatar" :alt="user.name" />
+              <Avatar class="size-8 rounded-full">
+                <AvatarImage v-if="avatarURL" :src="avatarURL" alt="" />
                 <AvatarFallback class="rounded-full">
-                  R
+                  {{ avatarFallback }}
                 </AvatarFallback>
               </Avatar>
-              <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">{{ user.name }}</span>
+              <div class="grid min-w-0 flex-1 text-left text-sm/tight">
+                <span class="truncate font-semibold capitalize">{{ user.name }}</span>
                 <span class="truncate text-xs">{{ user.email }}</span>
               </div>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <AlertDialog>
-            <AlertDialogTrigger as-child>
-              <DropdownMenuItem
-                class="cursor-pointer"
-                @select.prevent
-              >
-                <LogOut class="mr-2 h-4 w-4" />
-                {{ $t('logout.action') }}
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent
-              class="
-                max-h-[95svh] max-w-[95svw] grid-rows-[auto_minmax(0,1fr)_auto]
-                md:max-w-lg
-              "
-            >
-              <AlertDialogHeader>
-                <AlertDialogTitle>{{ $t('logout.title') }}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {{ $t('logout.confirm') }}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{{ $t('common.cancel') }}</AlertDialogCancel>
-                <AlertDialogAction @click="logOut">
-                  {{ $t('logout.action') }}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DropdownMenuItem
+            variant="destructive"
+            @select.prevent="openLogoutDialog"
+          >
+            <LogOut aria-hidden="true" />
+            {{ $t('logout.action') }}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <DashboardLogout
+        v-model:open="logoutOpen"
+        :show-trigger="false"
+        @close-auto-focus="restoreMenuFocus"
+      />
     </SidebarMenuItem>
   </SidebarMenu>
 </template>

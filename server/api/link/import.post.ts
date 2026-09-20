@@ -1,31 +1,73 @@
-import { ImportDataSchema } from '@@/schemas/import'
-import { nanoid } from '@@/schemas/link'
+import type { ImportResult } from '#shared/schemas/import'
+import { ImportDataSchema } from '#shared/schemas/import'
+import { nanoid } from '#shared/schemas/link'
 
-interface ImportResultItem {
-  index: number
-  slug: string
-  url: string
-}
-
-interface ImportResult {
-  success: number
-  skipped: number
-  failed: number
-  successItems: ImportResultItem[]
-  skippedItems: ImportResultItem[]
-  failedItems: (ImportResultItem & { reason: string })[]
-}
+defineRouteMeta({
+  openAPI: {
+    description: 'Import links from exported data',
+    security: [{ bearerAuth: [] }],
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['version', 'links'],
+            properties: {
+              version: { type: 'string', description: 'Export format version' },
+              exportedAt: { type: 'string', description: 'Export timestamp (ISO 8601)' },
+              count: { type: 'integer', description: 'Number of links in export' },
+              links: {
+                type: 'array',
+                description: 'Array of links to import',
+                items: {
+                  type: 'object',
+                  required: ['url', 'slug'],
+                  properties: {
+                    id: { type: 'string', description: 'Link ID (auto-generated if not provided)' },
+                    url: { type: 'string', description: 'The target URL' },
+                    slug: { type: 'string', description: 'The slug for the short link' },
+                    comment: { type: 'string', description: 'Optional comment' },
+                    createdAt: { type: 'integer', description: 'Creation timestamp (unix seconds)' },
+                    updatedAt: { type: 'integer', description: 'Last update timestamp (unix seconds)' },
+                    expiration: { type: 'integer', description: 'Expiration timestamp (unix seconds)' },
+                    title: { type: 'string', description: 'Custom title for link preview' },
+                    description: { type: 'string', description: 'Custom description for link preview' },
+                    image: { type: 'string', description: 'Custom image for link preview' },
+                    apple: { type: 'string', description: 'Apple App Store redirect URL' },
+                    google: { type: 'string', description: 'Google Play Store redirect URL' },
+                    cloaking: { type: 'boolean', description: 'Enable link cloaking (mask destination URL)' },
+                    redirectWithQuery: { type: 'boolean', description: 'Append query parameters to destination URL' },
+                    password: { type: 'string', description: 'Password protection for the link' },
+                    unsafe: { type: 'boolean', description: 'Mark link as unsafe, showing a warning page before redirect' },
+                    geo: { type: 'object', additionalProperties: { type: 'string' }, description: 'Geo-routing rules (country code to URL)' },
+                    tags: { type: 'array', items: { type: 'string' }, description: 'Up to 10 normalized link tags, each 1-32 characters' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+})
 
 export default eventHandler(async (event) => {
-  const kvBatchLimit = useRuntimeConfig(event).public.kvBatchLimit as string
-  const maxLinks = Math.floor(+kvBatchLimit / 2)
+  const { previewMode } = useRuntimeConfig(event).public
+  if (previewMode) {
+    throw createError({
+      status: 403,
+      statusText: 'Preview mode cannot import links.',
+    })
+  }
 
   const importData = await readValidatedBody(event, ImportDataSchema.parse)
-
-  if (importData.links.length > maxLinks) {
+  const { importRequestLimit } = useRuntimeConfig(event)
+  if (importData.links.length > importRequestLimit) {
     throw createError({
       status: 400,
-      statusText: `Too many links. Maximum ${maxLinks} links per request.`,
+      statusText: `Too many links. Maximum ${importRequestLimit} links per request.`,
     })
   }
 
@@ -38,45 +80,54 @@ export default eventHandler(async (event) => {
     failedItems: [],
   }
 
-  for (let i = 0; i < importData.links.length; i++) {
-    const linkData = importData.links[i]
+  const chunkSize = 4
+  for (let offset = 0; offset < importData.links.length; offset += chunkSize) {
+    const chunk = importData.links.slice(offset, offset + chunkSize)
+    const prepared = await Promise.all(chunk.map(async (linkData, chunkIndex) => {
+      const index = offset + chunkIndex
 
-    try {
-      const slug = normalizeSlug(event, linkData.slug)
-      const existingLink = await getLink(event, slug)
+      try {
+        const slug = normalizeSlug(event, linkData.slug)
+        const now = Math.floor(Date.now() / 1000)
+        const link = {
+          ...linkData,
+          id: linkData.id || nanoid(10)(),
+          slug,
+          createdAt: linkData.createdAt ?? now,
+          updatedAt: linkData.updatedAt ?? now,
+        }
+        if (link.password)
+          link.password = await normalizeLinkPasswordForStorage(link.password)
+        return { index, linkData, link }
+      }
+      catch (error) {
+        return { index, linkData, error }
+      }
+    }))
 
-      if (existingLink) {
-        result.skippedItems.push({ index: i, slug, url: linkData.url })
-        result.skipped++
+    const writable = prepared.filter(item => 'link' in item)
+    const writeResults = await createLinks(event, writable.map(item => item.link!))
+    let writeIndex = 0
+    for (const item of prepared) {
+      if ('error' in item) {
+        result.failed++
+        result.failedItems.push({ index: item.index, slug: item.linkData.slug, url: item.linkData.url, reason: item.error instanceof Error ? item.error.message : 'Unknown error' })
         continue
       }
 
-      const now = Math.floor(Date.now() / 1000)
-      const link = {
-        id: linkData.id || nanoid(10)(),
-        url: linkData.url,
-        slug,
-        comment: linkData.comment,
-        createdAt: linkData.createdAt || now,
-        updatedAt: linkData.updatedAt || now,
-        expiration: linkData.expiration,
-        title: linkData.title,
-        description: linkData.description,
-        image: linkData.image,
+      const writeResult = writeResults[writeIndex++]!
+      if ('error' in writeResult) {
+        result.failed++
+        result.failedItems.push({ index: item.index, slug: item.link.slug, url: item.linkData.url, reason: writeResult.error instanceof Error ? writeResult.error.message : 'Unknown error' })
       }
-
-      await putLink(event, link)
-      result.successItems.push({ index: i, slug, url: linkData.url })
-      result.success++
-    }
-    catch (error) {
-      result.failed++
-      result.failedItems.push({
-        index: i,
-        slug: linkData.slug,
-        url: linkData.url,
-        reason: error instanceof Error ? error.message : 'Unknown error',
-      })
+      else if (!writeResult.created) {
+        result.skippedItems.push({ index: item.index, slug: item.link.slug, url: item.linkData.url })
+        result.skipped++
+      }
+      else {
+        result.successItems.push({ index: item.index, slug: item.link.slug, url: item.linkData.url })
+        result.success++
+      }
     }
   }
 

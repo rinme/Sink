@@ -1,9 +1,6 @@
-import fs from 'node:fs'
+import { applyD1Migrations, env } from 'cloudflare:test'
+import { beforeAll } from 'vitest'
 
-export default function () {
-  fs.copyFileSync('.env', '.dev.vars')
-
-  return () => {
-    fs.rmSync('.dev.vars')
-  }
-}
+beforeAll(async () => {
+  await applyD1Migrations(env.DB, env.TEST_MIGRATIONS)
+})

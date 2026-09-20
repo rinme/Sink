@@ -1,22 +1,46 @@
-import type { Link } from '@@/app/types'
+import type { ExportData, Link } from '#shared/schemas/link'
+import { z } from 'zod'
 
-interface ExportData {
-  version: string
-  exportedAt: string
-  count: number
-  links: Link[]
-  cursor?: string
-  list_complete: boolean
-}
+defineRouteMeta({
+  openAPI: {
+    description: 'Export all links with pagination',
+    security: [{ bearerAuth: [] }],
+    parameters: [
+      {
+        name: 'cursor',
+        in: 'query',
+        required: false,
+        schema: { type: 'string' },
+        description: 'Pagination cursor from previous response',
+      },
+      {
+        name: 'status',
+        in: 'query',
+        required: false,
+        schema: { type: 'string', enum: ['active', 'expired', 'all'], default: 'all' },
+        description: 'Expiration status filter',
+      },
+    ],
+  },
+})
+
+const ExportQuerySchema = z.object({
+  cursor: z.string().trim().max(1024).optional(),
+  status: z.enum(['active', 'expired', 'all']).default('all'),
+})
 
 export default eventHandler(async (event) => {
-  const query = getQuery(event)
-  const cursor = query.cursor as string | undefined
+  const { cursor, status } = await getValidatedQuery(event, ExportQuerySchema.parse)
   const kvBatchLimit = useRuntimeConfig(event).public.kvBatchLimit as string
   const limit = +kvBatchLimit
 
-  const list = await listLinks(event, { limit, cursor })
-  const links = list.links.filter((link): link is Link => link !== null)
+  const list = await listLinks(event, { limit, cursor, status, backfillExpiration: true })
+  const links: Link[] = []
+  for (const link of list.links) {
+    if (link) {
+      links.push(await protectLinkPasswordForExport(link))
+    }
+  }
 
   const exportData: ExportData = {
     version: '1.0',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowUpDown } from 'lucide-vue-next'
+import { ArrowUpDown } from '@lucide/vue'
 
 const linksStore = useDashboardLinksStore()
 </script>
@@ -7,30 +7,25 @@ const linksStore = useDashboardLinksStore()
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="outline">
-        <TooltipProvider>
-          <Tooltip :delay-duration="100">
-            <TooltipTrigger class="flex items-center">
-              <ArrowUpDown
-                class="
-                  h-4 w-4
-                  sm:mr-2
-                "
-              />
-              <span
-                class="
-                  hidden
-                  sm:inline
-                "
-              >
-                {{ $t(`links.sort.${linksStore.sortBy}`) }}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{{ $t('links.sort.tip') }}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <Button
+        variant="outline"
+        :aria-label="$t(`links.sort.${linksStore.sortBy}`)"
+      >
+        <ArrowUpDown
+          aria-hidden="true"
+          class="
+            size-4
+            sm:mr-2
+          "
+        />
+        <span
+          class="
+            hidden
+            sm:inline
+          "
+        >
+          {{ $t(`links.sort.${linksStore.sortBy}`) }}
+        </span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent>

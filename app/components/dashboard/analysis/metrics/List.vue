@@ -2,10 +2,15 @@
 import type { MetricItem } from '@/types'
 import { VList } from 'virtua/vue'
 
-defineProps<{
+const props = withDefaults(defineProps<{
   metrics: MetricItem[]
   type: string
-}>()
+  viewportHeight?: number
+}>(), {
+  viewportHeight: 342,
+})
+
+const { locale } = useI18n()
 </script>
 
 <template>
@@ -14,6 +19,7 @@ defineProps<{
       class="
         flex justify-between border-b leading-[48px] transition-colors
         hover:bg-muted/50
+        motion-reduce:transition-none
       "
     >
       <div
@@ -34,17 +40,18 @@ defineProps<{
     <VList
       v-slot="{ item: metric }"
       :data="metrics"
-      :style="{ height: '342px' }"
+      :style="{ height: `${props.viewportHeight}px` }"
     >
       <div
         class="
           border-b px-4 py-2 transition-colors
           hover:bg-muted/50
+          motion-reduce:transition-none
         "
       >
-        <div class="flex justify-between">
+        <div class="flex items-start justify-between gap-3">
           <div
-            class="flex-1 truncate leading-5"
+            class="min-w-0 flex-1 leading-5"
           >
             <DashboardAnalysisMetricsName
               :name="metric.name"
@@ -52,28 +59,20 @@ defineProps<{
             />
           </div>
           <div
-            class="text-right"
+            class="shrink-0 text-right tabular-nums"
           >
-            {{ formatNumber(metric.count) }}
-            <span class="text-xs text-gray-500">({{ metric.percent }}%)</span>
+            {{ formatNumber(metric.count, locale) }}
+            <span class="text-xs text-muted-foreground">({{ metric.percent }}%)</span>
           </div>
         </div>
         <div
           class="flex-1"
         >
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger class="w-full">
-                <Progress
-                  v-model="metric.percent"
-                  class="h-2"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{{ metric.percent }}%</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Progress
+            v-model="metric.percent"
+            class="h-2"
+            :aria-label="`${$t('dashboard.count')}: ${metric.percent}%`"
+          />
         </div>
       </div>
     </VList>

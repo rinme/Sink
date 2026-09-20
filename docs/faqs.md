@@ -1,62 +1,83 @@
-# FAQs
+---
+title: Troubleshooting
+description: Fix common deploy, login, analytics, redirect, import, backup, and feature problems.
+---
 
-## 1. Why can't I create a link?
+# Troubleshooting
 
-Please check the Cloudflare KV bindings, the KV environment variable name should be all uppercase letters.
+## I cannot create or open short links
 
-<details>
-  <summary><b>Screenshot</b></summary>
-  <img alt="KV Bindings setting in Cloudflare" src="/docs/images/faqs-kv.png"/>
-</details>
+1. Confirm D1 and KV are bound with the exact names `DB` and `KV`
+2. Redeploy the latest `master` branch
+3. Open **Dashboard → Links** once (one-time storage setup)
 
-## 2. Why can't I log in?
-
-Please check if `NUXT_SITE_TOKEN` is set to pure numbers, Sink does not support pure number Tokens, we consider this to be unsafe.
-
-## 3. Why can't I see the analytics data?
-
-Analytics data requires access to Cloudflare’s settings:
-
-1. Verify `NUXT_CF_ACCOUNT_ID` and `NUXT_CF_API_TOKEN` are configured correctly (ensure the Account ID matches the deployment zone ID).
-2. Check that the Worker analytics engine is enabled.
+If you see **“storage not ready” (HTTP 423)**, step 3 is missing. New installs only need that one open. Very old KV-only installs need [storage migration](/storage/kv-to-d1).
 
 <details>
-  <summary><b>Screenshot</b></summary>
-  <img alt="Analytics engine Bindings setting in Cloudflare " src="/docs/images/faqs-Analytics_engine.png"/>
+  <summary><b>KV binding screenshot</b></summary>
+  <img alt="KV binding settings in Cloudflare" src="./images/faqs-kv.png">
 </details>
 
-## 4. I don't want the current homepage? Can it be redirected to my blog?
+## I cannot sign in or call the API
 
-Of course. Please set the environment variable `NUXT_HOME_URL` to your blog or official website address.
+The password must match `NUXT_SITE_TOKEN` exactly (no extra spaces or whitespace). Use at least 8 characters. If you never set the token, a random build-time password may have been used — set an explicit secret and redeploy.
 
-## 5. Why can't I see statistics after deploying with NuxtHub?
+If you use Cloudflare Access:
 
-NuxtHub's ANALYTICS points to its dataset, you need to set the `NUXT_DATASET` environment variable to point to the same dataset.
+- Both `NUXT_CF_ACCESS_TEAM_DOMAIN` and `NUXT_CF_ACCESS_AUD` are set
+- The AUD value is from this Access application
+- The Access cookie can reach `/api` (do not limit Cookie Path to `/dashboard` only)
 
-## 6. Why are links always case-insensitive?
+## Analytics is empty
 
-This is a feature of Sink. By default, we automatically convert all links to lowercase to avoid case-sensitive issues and improve usability. This ensures users don’t encounter errors due to accidental capitalization differences.
+Check all of these:
 
-However, you can disable this feature by setting the `NUXT_CASE_SENSITIVE` environment variable to `true`.
+1. Analytics Engine is bound as `ANALYTICS`
+2. Dataset name matches (`sink` by default, or the same as `NUXT_DATASET`)
+3. `NUXT_CF_ACCOUNT_ID` is the account that hosts this app
+4. `NUXT_CF_API_TOKEN` is a Custom Token with **Account → Account Analytics → Read**
+5. Bot filtering or dashboard filters are not hiding the traffic
 
-### What happens when `NUXT_CASE_SENSITIVE` is `true`?
+Full steps: [Analytics](/features/analytics).
 
-Newly generated links will be case-sensitive, treating `MyLink` and `mylink` as distinct. Randomly generated slugs will include both uppercase and lowercase characters, offering a larger pool of unique combinations (but not user-friendly that why we default to non-case-sensitive).
+<details>
+  <summary><b>Analytics Engine binding screenshot</b></summary>
+  <img alt="Analytics Engine binding settings in Cloudflare" src="./images/faqs-Analytics_engine.png">
+</details>
 
-## 7. Why does the Metric list only show the top 500 data entries?
+## Realtime events arrive in bursts or feel delayed
 
-To improve query performance, we have limited the amount of data. If you need to query more data, you can adjust it through `NUXT_LIST_QUERY_LIMIT`.
+Expected. The page refreshes about every 10 seconds and plays events at about one per second. It is not a live WebSocket stream. Also check that the view is not paused and the tab is visible.
 
-## 8. I don't want to count bot or crawler traffic
+## Custom short codes lose uppercase letters
 
-Set `NUXT_DISABLE_BOT_ACCESS_LOG` to `true`.
+Set `NUXT_CASE_SENSITIVE=true` and redeploy. This only affects **custom** codes; auto-generated codes stay lowercase. Existing codes are not renamed.
 
-## 9. How does the Import/Export feature work?
+## Cloaked page is blank or refuses to load
 
-Import and Export are designed to work within Cloudflare Workers' KV operation limits (50 per request by default).
+The target site likely blocks embedding. Turn off cloaking, or change the target site if you control it. OAuth and payment pages usually refuse embedding.
 
-- **Export**: Downloads links in batches, automatically paginating until complete.
-- **Import**: Uploads links in batches (half of `NUXT_PUBLIC_KV_BATCH_LIMIT`, default 25) since each link requires 2 KV operations (check existence + write).
-- **Expired links**: Imported as-is to support migration scenarios.
-- **Duplicate slugs**: Skipped during import (existing links are preserved).
-- **Validation**: All links are validated against the schema before import starts.
+## Safe browsing did not change the unsafe flag
+
+Auto-check runs only when create/edit leaves `unsafe` unset. An explicit `true` or `false` always wins. If the DNS check fails, Sink allows the link.
+
+## Import skips or rejects records
+
+- Active short-code conflicts are skipped
+- Invalid records fail validation
+- Expired records are allowed on purpose
+
+Keep each request within half the export page size. Use protected passwords from export — not the masked placeholders in the dashboard UI.
+
+## Backup was not created
+
+1. Confirm `R2` is bound
+2. Open **Dashboard → Links** once if storage is not ready yet (backup returns 423 until then)
+3. Workers scheduled backups: check `NUXT_DISABLE_AUTO_BACKUP` and Cron
+4. Pages: use manual backup only in this repo
+
+## Redirect still looks old
+
+Browser, CDN, or KV cache can delay what you see. Check `NUXT_LINK_CACHE_TTL` and `NUXT_REDIRECT_NO_STORE` in [configuration](/configuration/#advanced-defaults), then confirm the link in the dashboard.
+
+Unknown short codes (`NUXT_NOT_FOUND_REDIRECT`) always use **302**, even when normal redirects use `301`.

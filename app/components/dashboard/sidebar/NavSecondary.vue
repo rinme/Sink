@@ -1,160 +1,129 @@
 <script setup lang="ts">
-import { Languages, Laptop, Moon, Sun } from 'lucide-vue-next'
-import { GitHubIcon } from 'vue3-simple-icons'
+import { ArrowUpCircle, Coffee, Languages, Laptop, Moon, Sun } from '@lucide/vue'
 import { useSidebar } from '@/components/ui/sidebar'
 
-const { github } = useAppConfig()
+const { coffee } = useAppConfig()
 const colorMode = useColorMode()
-const { setLocale, locales } = useI18n()
-const { state } = useSidebar()
+const { t, setLocale, locales } = useI18n()
+const { isMobile, state } = useSidebar()
+const { hasUpdate, currentVersion, latestVersion } = useVersionCheck()
 
-const repo = github.replace('https://github.com/', '')
-const { data: stars, status } = await useFetch(
-  `https://api.github.com/repos/${repo}`,
-  {
-    transform: (res: { stargazers_count: number }) => res.stargazers_count,
-    getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] || nuxtApp.static.data[key],
-  },
-)
-const formattedStars = computed(() => {
-  if (!stars.value)
-    return null
-  return stars.value.toLocaleString()
-})
+const secondaryMenuClass = computed(() => isMobile.value || state.value === 'expanded'
+  ? 'flex-row items-center'
+  : 'items-center')
+const releaseLabel = computed(() => t('sidebar.update', {
+  current: currentVersion,
+  version: latestVersion.value,
+}))
 </script>
 
 <template>
   <SidebarGroup>
     <SidebarGroupContent>
-      <SidebarMenu>
+      <SidebarMenu :class="secondaryMenuClass">
         <SidebarMenuItem>
-          <div
-            class="flex w-full p-1.5 pr-0" :class="[
-              state === 'collapsed'
-                ? 'flex-col items-center gap-2'
-                : 'items-center justify-between',
-            ]"
+          <SidebarMenuButton
+            as-child
+            :tooltip="$t('sidebar.coffee')"
+            class="w-9 justify-center px-0"
           >
-            <TooltipProvider>
-              <Tooltip :delay-duration="100">
-                <TooltipTrigger as-child>
-                  <a
-                    :href="github"
-                    target="_blank"
-                    :title="$t('sidebar.github')"
-                    class="
-                      flex h-8 items-center justify-center gap-1.5 rounded-md
-                      px-2
-                      hover:bg-sidebar-accent
-                      hover:text-sidebar-accent-foreground
-                    "
-                  >
-                    <GitHubIcon class="size-4" />
-                    <template v-if="state !== 'collapsed'">
-                      <Skeleton v-if="status === 'pending'" class="h-4 w-8" />
-                      <span
-                        v-else-if="formattedStars" class="
-                          text-xs text-muted-foreground tabular-nums
-                        "
-                      >
-                        {{ formattedStars }} {{ $t('sidebar.stars') }}
-                      </span>
-                    </template>
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent :side="state === 'collapsed' ? 'right' : 'top'">
-                  <p>{{ $t('sidebar.github') }}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <div
-              class="flex gap-1" :class="[
-                state === 'collapsed' ? 'flex-col items-center' : 'items-center',
-              ]"
+            <a
+              :href="coffee"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="$t('sidebar.coffee')"
             >
-              <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <button
-                    class="
-                      flex size-8 items-center justify-center rounded-md
-                      hover:bg-sidebar-accent
-                      hover:text-sidebar-accent-foreground
-                    "
-                  >
-                    <Languages class="size-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  :align="state === 'collapsed' ? 'start' : 'end'"
-                  :side="state === 'collapsed' ? 'right' : 'top'"
-                  class="min-w-min"
-                >
-                  <DropdownMenuItem
-                    v-for="locale in locales"
-                    :key="locale.code"
-                    class="cursor-pointer"
-                    @click="setLocale(locale.code)"
-                  >
-                    <span class="mr-1">{{ locale.emoji }}</span>
-                    {{ locale.name }}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Coffee aria-hidden="true" />
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <button
-                    class="
-                      flex size-8 items-center justify-center rounded-md
-                      hover:bg-sidebar-accent
-                      hover:text-sidebar-accent-foreground
-                    "
-                  >
-                    <Sun
-                      class="
-                        size-4
-                        dark:hidden
-                      "
-                    />
-                    <Moon
-                      class="
-                        hidden size-4
-                        dark:block
-                      "
-                    />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  :align="state === 'collapsed' ? 'start' : 'end'"
-                  :side="state === 'collapsed' ? 'right' : 'top'"
-                  class="min-w-min"
-                >
-                  <DropdownMenuItem
-                    class="cursor-pointer"
-                    @click="colorMode.preference = 'light'"
-                  >
-                    <Sun class="mr-1 h-4 w-4" />
-                    {{ $t('theme.light') }}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    class="cursor-pointer"
-                    @click="colorMode.preference = 'dark'"
-                  >
-                    <Moon class="mr-1 h-4 w-4" />
-                    {{ $t('theme.dark') }}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    class="cursor-pointer"
-                    @click="colorMode.preference = 'system'"
-                  >
-                    <Laptop class="mr-1 h-4 w-4" />
-                    {{ $t('theme.system') }}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+        <SidebarMenuItem v-if="hasUpdate">
+          <SidebarMenuButton
+            as-child
+            :tooltip="releaseLabel"
+            class="relative w-9 justify-center px-0"
+          >
+            <a
+              href="https://github.com/ccbikai/Sink/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="releaseLabel"
+            >
+              <ArrowUpCircle aria-hidden="true" />
+              <span
+                aria-hidden="true"
+                class="
+                  absolute top-0.5 right-0.5 size-1.5 rounded-full bg-success
+                  motion-safe:animate-pulse
+                "
+              />
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem :class="{ 'ml-auto': isMobile || state === 'expanded' }">
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton
+                :tooltip="$t('layouts.header.select_language')"
+                :aria-label="$t('layouts.header.select_language')"
+                class="w-9 justify-center px-0"
+              >
+                <Languages aria-hidden="true" />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              :align="isMobile ? 'end' : (state === 'collapsed' ? 'start' : 'end')"
+              :side="isMobile ? 'top' : (state === 'collapsed' ? 'right' : 'top')"
+            >
+              <DropdownMenuItem
+                v-for="locale in locales"
+                :key="locale.code"
+                @click="setLocale(locale.code)"
+              >
+                <span>{{ locale.emoji }}</span>
+                {{ locale.name }}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+
+        <SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton
+                :tooltip="$t('theme.toggle')"
+                :aria-label="$t('theme.toggle')"
+                class="w-9 justify-center px-0"
+              >
+                <Sun aria-hidden="true" class="dark:hidden" />
+                <Moon
+                  aria-hidden="true" class="
+                    hidden
+                    dark:block
+                  "
+                />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              :align="isMobile ? 'end' : (state === 'collapsed' ? 'start' : 'end')"
+              :side="isMobile ? 'top' : (state === 'collapsed' ? 'right' : 'top')"
+            >
+              <DropdownMenuItem @click="colorMode.preference = 'light'">
+                <Sun aria-hidden="true" />
+                {{ $t('theme.light') }}
+              </DropdownMenuItem>
+              <DropdownMenuItem @click="colorMode.preference = 'dark'">
+                <Moon aria-hidden="true" />
+                {{ $t('theme.dark') }}
+              </DropdownMenuItem>
+              <DropdownMenuItem @click="colorMode.preference = 'system'">
+                <Laptop aria-hidden="true" />
+                {{ $t('theme.system') }}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroupContent>

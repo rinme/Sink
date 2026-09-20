@@ -28,6 +28,12 @@ const platformItems = computed<NavItem[]>(() => [
     icon: DASHBOARD_ROUTES.realtime.icon,
     isActive: isActive('realtime'),
   },
+  {
+    title: 'nav.check',
+    url: '/dashboard/check',
+    icon: DASHBOARD_ROUTES.check.icon,
+    isActive: isActive('check'),
+  },
 ])
 
 const settingsItems = computed<NavItem[]>(() => [
@@ -46,7 +52,9 @@ const settingsItems = computed<NavItem[]>(() => [
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" as-child>
-            <NuxtLink to="/" :title="title">
+            <NuxtLink
+              to="/" :title="title"
+            >
               <div
                 class="
                   flex aspect-square size-8 items-center justify-center
@@ -55,11 +63,13 @@ const settingsItems = computed<NavItem[]>(() => [
               >
                 <img
                   src="/sink.png"
-                  :alt="title"
+                  alt=""
+                  width="32"
+                  height="32"
                   class="size-8 rounded-full"
                 >
               </div>
-              <div class="grid flex-1 text-left text-sm leading-tight">
+              <div class="grid flex-1 text-left text-sm/tight">
                 <span class="truncate font-medium">{{ title }}</span>
                 <span class="truncate text-xs">{{ $t('sidebar.subtitle') }}</span>
               </div>

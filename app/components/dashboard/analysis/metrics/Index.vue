@@ -1,13 +1,13 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const tabs: Record<string, string[]> = {
+const tabs = {
   location: ['country', 'region', 'city'],
   referer: ['referer', 'slug'],
   time: ['language', 'timezone'],
   device: ['device', 'deviceType'],
   browser: ['os', 'browser', 'browserType'],
-}
+} as const
 
 const translatedTabs = computed(() => ({
   location: tabs.location.map(tab => t(`dashboard.metrics.${tab}`)),
@@ -19,7 +19,8 @@ const translatedTabs = computed(() => ({
 </script>
 
 <template>
-  <main
+  <section
+    :aria-label="$t('dashboard.details')"
     class="
       grid gap-8
       lg:grid-cols-12
@@ -56,5 +57,5 @@ const translatedTabs = computed(() => ({
       :tabs="translatedTabs.browser"
       :raw-tabs="tabs.browser"
     />
-  </main>
+  </section>
 </template>

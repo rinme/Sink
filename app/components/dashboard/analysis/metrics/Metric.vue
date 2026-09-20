@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MetricItem } from '@/types'
-import { Maximize } from 'lucide-vue-next'
+import { LoaderCircle } from '@lucide/vue'
 
 const props = defineProps<{
   type: string
@@ -13,103 +13,146 @@ const analysisStore = useDashboardAnalysisStore()
 const total = ref(0)
 const metrics = ref<MetricItem[]>([])
 const top10 = ref<MetricItem[]>([])
+const loading = shallowRef(false)
+const error = shallowRef(false)
+const hasLoaded = shallowRef(false)
+const retryKey = shallowRef(0)
 
 interface RawMetricData {
   name: string
   count: number
 }
 
-async function getLinkMetrics() {
-  total.value = 0
-  metrics.value = []
-  top10.value = []
-  const result = await useAPI<{ data: RawMetricData[] }>('/api/stats/metrics', {
-    query: {
-      type: props.type,
-      id: id.value,
-      startAt: analysisStore.dateRange.startAt,
-      endAt: analysisStore.dateRange.endAt,
-      ...analysisStore.filters,
-    },
-  })
-  if (Array.isArray(result.data)) {
-    total.value = result.data.reduce((acc, cur) => acc + Number(cur.count), 0)
-    metrics.value = result.data.map(item => ({
-      ...item,
-      percent: Math.floor(item.count / total.value * 100) || (item.count ? 1 : 0),
-    }))
-    top10.value = metrics.value.slice(0, 10)
+watch([() => analysisStore.dateRange, () => analysisStore.filters, retryKey], async (_values, _oldValues, onCleanup) => {
+  const controller = new AbortController()
+  onCleanup(() => controller.abort())
+  loading.value = true
+  error.value = false
+  try {
+    const result = await useAPI<{ data: RawMetricData[] }>('/api/stats/metrics', {
+      signal: controller.signal,
+      query: {
+        ...analysisStore.filters,
+        type: props.type,
+        id: id.value,
+        startAt: analysisStore.dateRange.startAt,
+        endAt: analysisStore.dateRange.endAt,
+      },
+    })
+    if (!controller.signal.aborted && Array.isArray(result.data)) {
+      total.value = result.data.reduce((acc, cur) => acc + Number(cur.count), 0)
+      metrics.value = result.data.map(item => ({
+        ...item,
+        percent: Math.floor(item.count / total.value * 100) || (item.count ? 1 : 0),
+      }))
+      top10.value = metrics.value.slice(0, 10)
+      hasLoaded.value = true
+    }
   }
-}
-
-watch([() => analysisStore.dateRange, () => analysisStore.filters], getLinkMetrics, {
-  deep: true,
-})
-
-onMounted(() => {
-  getLinkMetrics()
-})
+  catch {
+    if (!controller.signal.aborted)
+      error.value = true
+  }
+  finally {
+    if (!controller.signal.aborted)
+      loading.value = false
+  }
+}, { immediate: true })
 </script>
 
 <template>
-  <Card class="flex flex-col gap-0 p-0">
-    <template v-if="metrics.length">
-      <CardContent class="p-0">
-        <DashboardAnalysisMetricsList
-          class="flex-1"
-          :metrics="top10"
-          :type="type"
-        />
+  <Card
+    size="sm"
+    class="
+      min-h-0 transition-opacity
+      motion-reduce:transition-none
+    "
+    :class="loading && hasLoaded ? 'opacity-60' : 'opacity-100'"
+    :aria-busy="loading"
+  >
+    <template v-if="error">
+      <CardContent
+        class="
+          flex min-h-40 flex-1 flex-col items-center justify-center gap-2
+          text-sm text-destructive
+        " role="alert"
+      >
+        <span>{{ $t('dashboard.realtime.stats_error') }}</span>
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          class="text-destructive"
+          @click="retryKey++"
+        >
+          {{ $t('common.try_again') }}
+        </Button>
       </CardContent>
-      <CardFooter class="py-2">
-        <Dialog>
-          <DialogTrigger
-            as-child
-            class="w-full"
+    </template>
+    <template v-else-if="loading && !hasLoaded">
+      <div class="h-[364px] overflow-hidden">
+        <div class="flex h-12 items-center justify-between px-4">
+          <Skeleton class="h-4 w-32 rounded-full" />
+          <Skeleton class="h-4 w-20 rounded-full" />
+        </div>
+        <div class="h-[316px] overflow-hidden">
+          <div
+            v-for="index in 7"
+            :key="index"
+            class="space-y-2 border-b px-4 py-2"
           >
-            <Button
-              variant="link"
-            >
-              <Maximize class="mr-2 h-4 w-4" />
-              {{ $t('dashboard.details') }}
-            </Button>
-          </DialogTrigger>
-          <DialogContent
-            class="
-              max-h-[95svh] max-w-[95svw] grid-rows-[auto_minmax(0,1fr)_auto]
-              md:max-w-(--breakpoint-md)
-            "
-          >
-            <DialogHeader>
-              <DialogTitle>{{ name }}</DialogTitle>
-            </DialogHeader>
-            <DashboardAnalysisMetricsList
-              class="overflow-y-auto"
-              :metrics="metrics"
-              :type="type"
-            />
-          </DialogContent>
-        </Dialog>
+            <div class="flex items-center justify-between gap-3">
+              <Skeleton class="h-4 w-2/5" />
+              <Skeleton class="h-4 w-20 shrink-0" />
+            </div>
+            <Skeleton class="h-2 w-full rounded-full" />
+          </div>
+        </div>
+      </div>
+      <CardFooter>
+        <Skeleton class="h-9 w-full rounded-md" />
       </CardFooter>
     </template>
-    <template v-else>
-      <div class="flex h-12 items-center justify-between px-4">
-        <Skeleton
-          class="h-4 w-32 rounded-full"
+    <template v-else-if="metrics.length">
+      <DashboardAnalysisMetricsList
+        :metrics="top10"
+        :type="type"
+        :viewport-height="316"
+      />
+      <CardFooter>
+        <DashboardAnalysisMetricsMetricDetailsDialog
+          :title="name"
+          :metrics="metrics"
+          :type="type"
         />
-        <Skeleton
-          class="h-4 w-20 rounded-full"
-        />
-      </div>
-      <div
-        v-for="i in 5"
-        :key="i"
-        class="px-4 py-4"
-      >
-        <Skeleton
-          class="h-4 w-full rounded-full"
-        />
-      </div>
+      </CardFooter>
     </template>
+    <CardContent
+      v-else-if="loading"
+      class="
+        flex min-h-40 flex-1 items-center justify-center text-sm
+        text-muted-foreground
+      "
+      role="status"
+    >
+      <LoaderCircle
+        class="
+          size-5
+          motion-safe:animate-spin
+        "
+        aria-hidden="true"
+      />
+      <span class="sr-only">{{ $t('dashboard.loading') }}</span>
+    </CardContent>
+    <CardContent
+      v-else
+      class="
+        flex min-h-40 flex-1 items-center justify-center text-sm
+        text-muted-foreground
+      "
+      role="status"
+    >
+      {{ $t('dashboard.no_data') }}
+    </CardContent>
   </Card>
 </template>

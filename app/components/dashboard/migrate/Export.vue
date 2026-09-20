@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Link } from '@@/app/types'
-import { Download, Loader } from 'lucide-vue-next'
+import type { Link } from '@/types'
+import { Download, Loader } from '@lucide/vue'
 import { toast } from 'vue-sonner'
+import { createExportFilename } from '#shared/utils/export-file'
 
 interface ExportResponse {
   version: string
@@ -13,13 +14,20 @@ interface ExportResponse {
 }
 
 const { t } = useI18n()
-const isExporting = ref(false)
+const exportingStatus = ref<'all' | 'active' | 'expired' | null>(null)
 const exportedCount = ref(0)
+const isExporting = computed(() => exportingStatus.value !== null)
+
+const exportOptions = [
+  { status: 'all', labelKey: 'migrate.export.button', variant: 'default' },
+  { status: 'active', labelKey: 'migrate.export.button_active', variant: 'secondary' },
+  { status: 'expired', labelKey: 'migrate.export.button_expired', variant: 'secondary' },
+] as const
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-async function handleExport() {
-  isExporting.value = true
+async function handleExport(status: 'all' | 'active' | 'expired') {
+  exportingStatus.value = status
   exportedCount.value = 0
 
   try {
@@ -28,8 +36,10 @@ async function handleExport() {
     let listComplete = false
 
     while (!listComplete) {
-      const params = cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''
-      const data = await useAPI<ExportResponse>(`/api/link/export${params}`)
+      const params = new URLSearchParams({ status })
+      if (cursor)
+        params.set('cursor', cursor)
+      const data = await useAPI<ExportResponse>(`/api/link/export?${params}`)
 
       allLinks.push(...data.links)
       exportedCount.value = allLinks.length
@@ -48,7 +58,7 @@ async function handleExport() {
       links: allLinks,
     }
 
-    saveAsJson(exportData, `sink-links-${Date.now()}.json`)
+    saveAsJson(exportData, createExportFilename('sink-links', 'json'))
 
     toast.success(t('migrate.export.success'))
   }
@@ -58,7 +68,7 @@ async function handleExport() {
     })
   }
   finally {
-    isExporting.value = false
+    exportingStatus.value = null
     exportedCount.value = 0
   }
 }
@@ -67,18 +77,31 @@ async function handleExport() {
 <template>
   <Card class="h-fit">
     <CardHeader>
-      <CardTitle>{{ $t('migrate.export.title') }}</CardTitle>
+      <CardTitle><h2>{{ $t('migrate.export.title') }}</h2></CardTitle>
       <CardDescription>{{ $t('migrate.export.description') }}</CardDescription>
     </CardHeader>
-    <CardContent>
-      <Button :disabled="isExporting" @click="handleExport">
-        <Loader v-if="isExporting" class="mr-2 h-4 w-4 animate-spin" />
-        <Download v-else class="mr-2 h-4 w-4" />
-        <template v-if="isExporting && exportedCount > 0">
-          {{ exportedCount }} {{ $t('migrate.export.total_links') }}...
+    <CardContent class="flex flex-wrap gap-2">
+      <Button
+        v-for="option in exportOptions"
+        :key="option.status"
+        :variant="option.variant"
+        class="tabular-nums"
+        :disabled="isExporting"
+        :aria-busy="exportingStatus === option.status"
+        @click="handleExport(option.status)"
+      >
+        <Loader
+          v-if="exportingStatus === option.status" aria-hidden="true" class="
+            size-4
+            motion-safe:animate-spin
+          "
+        />
+        <Download v-else aria-hidden="true" class="size-4" />
+        <template v-if="exportingStatus === option.status && exportedCount > 0">
+          {{ exportedCount }} {{ $t('migrate.export.total_links') }}…
         </template>
         <template v-else>
-          {{ $t('migrate.export.button') }}
+          {{ $t(option.labelKey) }}
         </template>
       </Button>
     </CardContent>

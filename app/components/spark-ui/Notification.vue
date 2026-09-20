@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { cn } from '@/lib/utils'
 
 const props = defineProps<{
@@ -6,53 +6,60 @@ const props = defineProps<{
   class?: string
   description: string
   icon?: string
-  color?: string
   time: number
 }>()
 
-const className = cn(
-  'relative mx-auto my-1 min-h-fit w-full cursor-pointer rounded-2xl border',
-  // animation styles
-  `
-    transform-gpu transition-all duration-200 ease-in-out
-    hover:scale-[103%]
-  `,
-  // light styles
-  'bg-white',
-  // dark styles
-  `
-    dark:bg-transparent dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]
-    dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)]
-  `,
-)
+const { locale } = useI18n()
+
+const dateTime = computed(() => new Date(props.time * 1000).toISOString())
 </script>
 
 <template>
-  <figure :class="className">
-    <div class="flex flex-row items-center gap-2 px-2 py-2">
+  <article
+    :class="cn(
+      `
+        relative mx-auto my-1 min-h-fit w-full rounded-lg border border-border
+        bg-card text-card-foreground shadow-sm
+      `,
+      props.class,
+    )"
+  >
+    <div class="flex flex-row items-center gap-2 p-2">
       <div
-        class="flex size-10 items-center justify-center rounded-2xl"
-        :style="{ backgroundColor: props.color || 'transparent' }"
+        class="
+          flex size-10 shrink-0 items-center justify-center rounded-md
+          bg-secondary text-secondary-foreground
+        "
       >
-        <span class="text-lg">{{ props.icon }}</span>
+        <span aria-hidden="true" class="text-lg">{{ props.icon }}</span>
       </div>
-      <div class="flex flex-col overflow-hidden">
+      <div class="min-w-0 flex-1">
         <div
-          class="flex flex-row items-center text-lg font-medium whitespace-pre"
+          class="flex min-w-0 flex-row items-center text-lg font-medium"
         >
           <span
+            :title="props.name"
             class="
-              text-sm text-foreground
+              min-w-0 truncate text-sm text-card-foreground
               sm:text-lg
             "
           >{{ props.name }}</span>
-          <span class="mx-1">·</span>
-          <span class="text-xs text-gray-500">{{ shortTime(props.time) }}</span>
+          <span aria-hidden="true" class="mx-1 shrink-0">·</span>
+          <time
+            :datetime="dateTime"
+            class="shrink-0 text-xs text-muted-foreground"
+          >
+            {{ shortTime(props.time, locale) }}
+          </time>
         </div>
-        <p class="text-sm font-normal">
+        <p
+          v-if="props.description" class="
+            text-sm font-normal wrap-break-word text-muted-foreground
+          "
+        >
           {{ props.description }}
         </p>
       </div>
     </div>
-  </figure>
+  </article>
 </template>

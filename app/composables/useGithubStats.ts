@@ -1,26 +1,24 @@
+import { computed } from 'vue'
+import { useAppConfig, useFetch } from '#imports'
+
 export function useGithubStats() {
   const { github } = useAppConfig()
   const repo = github.replace('https://github.com/', '')
 
-  const { data, status } = useFetch(
+  const { data } = useFetch(
     `https://api.github.com/repos/${repo}`,
     {
-      key: 'github-stats',
-      server: false,
-      lazy: true,
-      dedupe: 'defer',
       transform: (res: { stargazers_count: number, forks_count: number }) => ({
         stars: res.stargazers_count,
         forks: res.forks_count,
       }),
-      getCachedData: key => useNuxtApp().payload.data[key],
     },
   )
 
-  const formattedStats = computed(() => ({
-    stars: data.value?.stars?.toLocaleString() ?? '6,000',
-    forks: data.value?.forks?.toLocaleString() ?? '4,000',
+  const rawStats = computed(() => ({
+    stars: data.value?.stars ?? 6000,
+    forks: data.value?.forks ?? 4000,
   }))
 
-  return { stats: formattedStats, status }
+  return { rawStats }
 }
