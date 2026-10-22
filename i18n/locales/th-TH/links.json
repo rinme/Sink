@@ -110,7 +110,7 @@
       "redirect_with_query_label": "เปลี่ยนเส้นทางพร้อมพารามิเตอร์คิวรี",
       "redirect_with_query_description": "ต่อท้ายพารามิเตอร์คิวรีจากลิงก์สั้นไปยัง URL ปลายทาง มีผลเหนือการตั้งค่าส่วนกลาง",
       "cloaking_label": "เปิดใช้งานการพรางลิงก์",
-      "cloaking_description": "แสดงลิงก์สั้นในแถบที่อยู่ของเบราว์เซอร์แทน URL ปลายทาง อาจใช้ไม่ได้กับเว็บไซต์ที่บล็อกการฝัง iframe",
+      "cloaking_description": "แสดงลิงก์สั้นในแถบที่อยู่ของเบราว์เซอร์แทน URL ปลายทาง อาจใช้ไม่ได้กับเว็บไซต์ที่บล็อกการฝัง iframe ไม่สามารถใช้ร่วมกับ Reverse Proxy ได้",
       "unsafe_label": "ทำเครื่องหมายว่าไม่ปลอดภัย",
       "unsafe_description": "แสดงหน้าเตือนก่อนเปลี่ยนเส้นทาง ผู้เข้าชมต้องยืนยันเพื่อดำเนินการต่อ",
       "nsfw": "NSFW",
@@ -158,7 +158,13 @@
       "utm_clear": "ล้าง",
       "utm_invalid_url": "ป้อน URL ที่ถูกต้องเพื่อดูตัวอย่างและนำพารามิเตอร์ UTM ไปใช้",
       "ai_og_generate": "สร้าง OpenGraph ด้วย AI",
-      "duplicate_url_hint": "URL นี้มีอยู่แล้วในชื่อ {shortLink}"
+      "duplicate_url_hint": "URL นี้มีอยู่แล้วในชื่อ {shortLink}",
+      "url_description": "กรอก URL ที่สมบูรณ์ เช่น https://example.com ความยาวไม่เกิน {max} ตัวอักษร",
+      "url_required": "จำเป็นต้องระบุ URL",
+      "url_invalid": "รูปแบบ URL ไม่ถูกต้อง กรุณากรอก URL ที่สมบูรณ์ เช่น https://example.com",
+      "url_too_long": "URL มีความยาว {length} ตัวอักษร แต่จำกัดไว้ที่ {max} ตัวอักษร",
+      "proxy_label": "เปิดใช้งาน Reverse Proxy",
+      "proxy_description": "ส่งต่อเนื้อหาจากปลายทางแบบโปร่งใสโดยไม่เปลี่ยนเส้นทางด้วย 301/302 เหมาะสำหรับ subscriptions และ API ไม่สามารถใช้ร่วมกับการปิดบังลิงก์ได้"
     },
     "dialogs": {
       "discard": {

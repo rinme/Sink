@@ -30,6 +30,17 @@ const { t, locale } = useI18n()
 
 type GeoRoute = DashboardLinkFormData['geo'][number]
 
+// Runtime env parsing turns NUXT_PUBLIC_LINK_PROXY_ENABLED into a boolean.
+const linkProxyEnabled = !!useRuntimeConfig().public.linkProxyEnabled
+
+// Proxy and cloaking are exclusive delivery modes; enabling one turns the other off.
+// A hidden proxy switch keeps its stored value instead of being cleared by cloaking.
+function handleExclusiveSwitch(field: AnyFieldApi, exclusiveField: 'cloaking' | 'proxy', value: boolean) {
+  field.handleChange(value)
+  if (value && (exclusiveField === 'cloaking' || linkProxyEnabled))
+    props.form.setFieldValue(exclusiveField, false)
+}
+
 function updateGeoRoute(routes: GeoRoute[], index: number | string, value: Partial<GeoRoute>) {
   const targetIndex = Number(index)
   return routes.map((route, routeIndex) => routeIndex === targetIndex ? { ...route, ...value } : route)
@@ -98,9 +109,21 @@ async function aiOg() {
           :model-value="field.state.value"
           :label="$t('links.form.cloaking_label')"
           :description="$t('links.form.cloaking_description')"
-          @update:model-value="field.handleChange"
+          @update:model-value="handleExclusiveSwitch(field, 'proxy', $event)"
         />
       </props.form.Field>
+
+      <template v-if="linkProxyEnabled">
+        <props.form.Field v-slot="{ field }" name="proxy">
+          <DashboardLinksEditorFieldSwitch
+            :id="`${idPrefix}-${field.name}`"
+            :model-value="field.state.value"
+            :label="$t('links.form.proxy_label')"
+            :description="$t('links.form.proxy_description')"
+            @update:model-value="handleExclusiveSwitch(field, 'cloaking', $event)"
+          />
+        </props.form.Field>
+      </template>
 
       <props.form.Field v-slot="{ field }" name="unsafe">
         <DashboardLinksEditorFieldSwitch
@@ -173,26 +196,15 @@ async function aiOg() {
             <PopoverContent class="w-auto p-0" align="start">
               <Calendar
                 :model-value="field.state.value"
-                :default-placeholder="today(getTimeZone())"
                 :min-value="today(getTimeZone())"
-                layout="month-and-year"
                 initial-focus
-                @update:model-value="(v: DateValue | undefined) => {
-                  field.handleChange(v)
+                @update:model-value="(val: DateValue | undefined) => {
+                  field.handleChange(val)
                   datePickerOpen = false
                 }"
               />
             </PopoverContent>
           </Popover>
-          <Button
-            v-if="field.state.value"
-            type="button"
-            variant="ghost"
-            size="sm"
-            @click="field.handleChange(undefined)"
-          >
-            {{ $t('links.form.clear_expiration') }}
-          </Button>
           <FieldError
             v-if="isInvalid(field)"
             :errors="formatErrors(field.state.meta.errors)"
@@ -201,9 +213,9 @@ async function aiOg() {
       </props.form.Field>
 
       <props.form.Field v-slot="{ field }" name="password">
-        <Field>
+        <Field :data-invalid="isInvalid(field)">
           <FieldLabel :for="`${idPrefix}-${field.name}`">
-            {{ $t('links.form.password_label') }}
+            {{ $t('links.form.password') }}
           </FieldLabel>
           <FieldDescription>
             {{ $t('links.form.password_description') }}
@@ -212,11 +224,15 @@ async function aiOg() {
             :id="`${idPrefix}-${field.name}`"
             :name="field.name"
             :model-value="formatPasswordDisplay(field.state.value)"
-            :placeholder="$t('links.form.password_placeholder')"
-            :type="isMaskedLinkPassword(field.state.value) ? 'text' : 'password'"
-            autocomplete="off"
+            :aria-invalid="getAriaInvalid(field)"
+            placeholder="••••••••"
+            autocomplete="new-password"
             @blur="field.handleBlur"
             @input="field.handleChange(($event.target as HTMLInputElement).value)"
+          />
+          <FieldError
+            v-if="isInvalid(field)"
+            :errors="formatErrors(field.state.meta.errors)"
           />
         </Field>
       </props.form.Field>
@@ -226,7 +242,7 @@ async function aiOg() {
   <TabsContent value="social" class="space-y-4 pt-4 outline-none">
     <FieldGroup>
       <props.form.Field v-slot="{ field }" name="title">
-        <Field>
+        <Field :data-invalid="isInvalid(field)">
           <div class="flex items-center justify-between">
             <FieldLabel :for="`${idPrefix}-${field.name}`">
               {{ $t('links.form.og_title') }}
@@ -250,10 +266,15 @@ async function aiOg() {
             :id="`${idPrefix}-${field.name}`"
             :name="field.name"
             :model-value="field.state.value"
-            :placeholder="$t('links.form.og_title_placeholder')"
+            :aria-invalid="getAriaInvalid(field)"
+            placeholder="Example Website"
             autocomplete="off"
             @blur="field.handleBlur"
             @input="field.handleChange(($event.target as HTMLInputElement).value)"
+          />
+          <FieldError
+            v-if="isInvalid(field)"
+            :errors="formatErrors(field.state.meta.errors)"
           />
         </Field>
       </props.form.Field>
@@ -263,7 +284,9 @@ async function aiOg() {
           :field="field"
           :input-id="`${idPrefix}-${field.name}`"
           :label="$t('links.form.og_description')"
-          :placeholder="$t('links.form.og_description_placeholder')"
+          :invalid="isInvalid(field)"
+          :aria-invalid="getAriaInvalid(field)"
+          :errors="formatErrors(field.state.meta.errors)"
         />
       </props.form.Field>
 

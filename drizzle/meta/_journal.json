@@ -43,6 +43,13 @@
       "when": 1786005047739,
       "tag": "0005_add_timer_and_nsfw",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1789995773114,
+      "tag": "0006_tan_karma",
+      "breakpoints": true
     }
   ]
 }
