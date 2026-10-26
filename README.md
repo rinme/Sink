@@ -1,3 +1,4 @@
+# This fork is abandoned I moved on to my own project [Run](https://github.com/rinme/run)
 # ⚡ Sink
 
 **A Simple, Speedy, Secure, and Serverless Link Shortener with Analytics, Running Entirely on Cloudflare.**
